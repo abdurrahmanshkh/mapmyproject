@@ -55,9 +55,9 @@ export const login=(req,res)=>{
             return res.status(400).json("incorrect password")
         }
 
-        const token=jwt.sign({id:data[0].id},"secretkey")
+        const token=jwt.sign({userID:data[0].userID},"secretKey")
         const{password,...others}=data[0]
-
+        console.log("token : ",token)
         res
         .cookie("accessToken",token,{
             httpOnly: true,
