@@ -45,3 +45,6 @@ CREATE TABLE assigned(
 ALTER TABLE users
 ADD CONSTRAINT unique_name_email
 UNIQUE (name, email);
+
+--fixed typo 
+ALTER TABLE tasks CHANGE tastStartDate taskStartDate DATETIME;
