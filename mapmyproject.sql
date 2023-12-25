@@ -41,3 +41,7 @@ CREATE TABLE assigned(
 	FOREIGN KEY (assignedUserID) REFERENCES users(userID)
 
 );
+-- Add unique constraint to the name column
+ALTER TABLE users
+ADD CONSTRAINT unique_name_email
+UNIQUE (name, email);
