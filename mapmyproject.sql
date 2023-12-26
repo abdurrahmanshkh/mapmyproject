@@ -1,6 +1,5 @@
+create database mapmyproject;
 use mapmyproject;
-
-
 
 CREATE TABLE users (
 	userID INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
