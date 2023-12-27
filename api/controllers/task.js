@@ -87,3 +87,16 @@ export const assignTask = (req, res) => {
         });
     });
 };
+
+export const getTask = (req, res) => {
+    const parentProjectID = req.params.id; // Use req.params.id instead of req.param.id
+    const getTaskQuery = "SELECT taskID,taskName,taskDescription,taskStatus,taskStartDate,taskDueDate FROM tasks WHERE parentProjectID=?";
+    
+    db.query(getTaskQuery, [parentProjectID], (err, data) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json("Internal server error");
+        }
+        return res.status(200).json(data);
+    });
+};
