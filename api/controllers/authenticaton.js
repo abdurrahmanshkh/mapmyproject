@@ -3,8 +3,11 @@ import bcrpyt from "bcryptjs"
 import jwt from "jsonwebtoken"
 
 export const register = (req, res) => {
-    const { username, email, password } = req.body;
-
+    const username=req.body.username
+    const password=req.body.password
+    const email=req.body.email
+    console.log(username)
+    console.log(req.body)
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
         return res.status(400).json("Invalid email format");
