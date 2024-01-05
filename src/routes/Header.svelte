@@ -26,7 +26,10 @@
 				<a href="/sverdle">Sverdle</a>
 			</li>
 			<li aria-current={$page.url.pathname.startsWith('/mapmyproject') ? 'page' : undefined}>
-				<a href="/mapmyproject">mapmyproject</a>
+				<a href="/mapmyproject">MapMyProject</a>
+			</li>
+			<li aria-current={$page.url.pathname.startsWith('/projects') ? 'page' : undefined}>
+				<a href="/projects">Projects</a>
 			</li>
 		</ul>
 		<svg viewBox="0 0 2 3" aria-hidden="true">

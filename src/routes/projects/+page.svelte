@@ -37,64 +37,46 @@
         Stay in control, enhance collaboration, and witness the transformation of your projects from initiation to completion.
       </P>
       <P class="mb-6 text-lg lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">
-        Ready to get started? Login or Sign Up to MapMyProject and experience a new era of project management.
+      Ready to get started? Login to MapMyProject and experience a new era of project management.
       </P>
     </div>
 
-    <P class="mt-0 mb-6 text-lg lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">        
+    <P class="mb-6 text-lg lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">
+    {#if loggedIn}
+      <Button href="/">
+        Go to Projects
+        <ArrowRightOutline class="w-3.5 h-3.5 ms-2" />
+      </Button>        
+    
+    {:else}
 
       <form>
-        <div class="grid gap-10 mb-0 md:grid-cols-2">
+        <div class="grid gap-6 mb-0 md:grid-cols-2">
 
-          <div class="">
-
-            <Heading tag="h2" class="mb-8" customSize="text-2xl font-extrabold  md:text-3xl lg:text-4xl">
-              Sign Up
-            </Heading>
-
-            <div class="mb-6">
-              <Label for="first_name" class="mb-2">Full Name</Label>
-              <Input type="text" id="first_name" placeholder="John" required />
-            </div>
-
-            <div class="mb-6">
-            <Label for="email" class="mb-2">Email address</Label>
-            <Input type="email" id="email" placeholder="john.doe@company.com" required />
-            </div>
-
-            <div class="mb-6">
-            <Label for="password" class="mb-2">Password</Label>
-            <Input type="password" id="password" placeholder="•••••••••" required />
-            </div>
-
-        <Button type="submit">Sign Up</Button>
-
+          <div>
+            <Label for="first_name" class="mb-2">Full Name</Label>
+            <Input type="text" id="first_name" placeholder="John" required />
           </div>
 
-          <div class="">
-
-            <Heading tag="h2" class="mb-8" customSize="text-2xl font-extrabold  md:text-3xl lg:text-4xl">
-              Login
-            </Heading>
-
-            <div class="mb-6">
-              <Label for="first_name" class="mb-2">Full Name</Label>
-              <Input type="text" id="first_name" placeholder="John" required />
-            </div>
-
-            <div class="mb-6">
-            <Label for="email" class="mb-2">Email address</Label>
-            <Input type="email" id="email" placeholder="john.doe@company.com" required />
-            </div>
-
-            <Button type="submit">Login</Button>
-
+          <div class="mb-6">
+          <Label for="email" class="mb-2">Email address</Label>
+          <Input type="email" id="email" placeholder="john.doe@company.com" required />
           </div>
 
         </div>
 
+        <div class="mb-6">
+          <Label for="password" class="mb-2">Password</Label>
+          <Input type="password" id="password" placeholder="•••••••••" required />
+        </div>
+        
+        <Checkbox class="mb-6 space-x-1 rtl:space-x-reverse" required>
+          I agree with the <A href="/" class="text-primary-700 dark:text-primary-600 hover:underline">terms and conditions</A>.
+        </Checkbox>
+
+        <Button type="submit">Submit</Button>
       </form>    
-     
+      {/if}
     </P>
   </div>
 </main>
