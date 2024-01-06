@@ -4,7 +4,7 @@
 </script>
 
 <main>
-  <div class="container mx-auto mt-8 items-center">
+  <div class="container mx-auto mt-8 mb-8 items-center">
 
     <div class="flex flex-col space-y-6 sm:space-y-0 sm:flex-row sm:items-center sm:justify-center">
 
