@@ -1,32 +1,34 @@
 <script>
-  import { Input, Label, Helper, Button, Checkbox, A, Heading, P} from 'flowbite-svelte';
+  import { Input, Label, Helper, Button, Hr, Checkbox, A, Heading, P} from 'flowbite-svelte';
   import { Card } from 'flowbite-svelte';
 </script>
 
 <main>
 
-  <div class="container mx-auto mt-8 items-center">
-    <div class="text-center items-center">
-      <Heading tag="h1" class="mb-8" customSize="text-4xl font-extrabold  md:text-5xl lg:text-6xl">MapMyProject</Heading>
-      <P class="mb-6 text-lg lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">
+  <div class="container mx-auto mt-8 items-center lg:grid lg:grid-cols-2 gap-8">
+    <Card class="text-center" size="" padding="xl">
+      <h5 class="mb-0 text-3xl font-bold text-gray-900 dark:text-white">
+        MapMyProject
+      </h5>
+      <Hr classHr="my-4" />
+      <p class="mb-3 text-base text-gray-500 sm:text-lg dark:text-gray-400">
         Welcome to MapMyProject, a cutting-edge project management system designed to streamline 
         your project workflows and elevate collaboration among team members. MapMyProject empowers 
         you to create, organize, and successfully execute projects with ease.
-      </P>
-      <P class="mb-6 text-lg lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">
+      </p>
+      <p class="mb-0 text-base text-gray-500 sm:text-lg dark:text-gray-400">
         MapMyProject is not just a tool; it's a catalyst for efficient project management.
         Stay in control, enhance collaboration, and witness the transformation of your projects from initiation to completion.
-      </P>
-      <P class="mb-6 text-lg lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">
-        Ready to get started? Login to MapMyProject and experience a new era of project management.
-      </P>
-    </div>
+      </p>
+    </Card>
 
-    <div class="flex flex-col space-y-6 sm:space-y-0 sm:flex-row sm:items-center sm:justify-center">
 
       <Card class="w-full max-w-md">
         <form class="flex flex-col space-y-6" action="/">
-          <h3 class="text-xl font-medium text-gray-900 dark:text-white">Sign in to our platform</h3>
+          <h3 class="text-xl font-medium text-gray-900 dark:text-white text-center">
+            Ready to get started? Login to MapMyProject and experience a new era of project management.
+          </h3>
+          <Hr classHr="my-8" />
           <Label class="space-y-2">
             <span>Email</span>
             <Input type="email" name="email" placeholder="name@company.com" required />
@@ -42,7 +44,6 @@
         </form>
       </Card>
 
-    </div>
   </div>
 
 </main>
