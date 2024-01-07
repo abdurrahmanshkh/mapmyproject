@@ -1,4 +1,3 @@
-@ -1,47 +0,0 @@
 <script>
   import { Input, Label, Card, Button, Hr} from 'flowbite-svelte';
 </script>
