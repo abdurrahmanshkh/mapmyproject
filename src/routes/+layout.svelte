@@ -2,7 +2,7 @@
 	import '../app.pcss';
 	import Header from './Header.svelte';
 	import './styles.css';
-  	import { Footer, FooterCopyright, Navbar,P} from 'flowbite-svelte';
+  	import { Footer, FooterCopyright, Navbar} from 'flowbite-svelte';
 </script>
 
 <div class="app">

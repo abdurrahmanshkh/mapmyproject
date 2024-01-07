@@ -1,11 +1,10 @@
 <script>
-  import { Input, Label, Helper, Button, Hr, Checkbox, A, Heading, P} from 'flowbite-svelte';
-  import { Card } from 'flowbite-svelte';
+  import { Input, Label, Card, Button, Hr} from 'flowbite-svelte';
 </script>
 
 <main>
 
-  <div class="container mx-auto mt-8 mb-8 items-center lg:grid lg:grid-cols-2 gap-8">
+  <div class="container mx-auto py-10 items-center lg:grid lg:grid-cols-2 gap-10">
     <Card class="text-center" size="" padding="xl">
       <h5 class="mb-0 text-3xl font-bold text-gray-900 dark:text-white">
         MapMyProject
