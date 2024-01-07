@@ -1,14 +1,27 @@
 <script>
 	import '../app.pcss';
-	import Header from './Header.svelte';
 	import './styles.css';
-  	import { Footer, FooterCopyright, Navbar} from 'flowbite-svelte';
+  	import { Footer, FooterCopyright, Navbar, NavBrand, NavLi, NavUl, NavHamburger, DarkMode} from 'flowbite-svelte';
 </script>
 
 <div class="app">
 
-	<Header></Header>
-
+	<header class="flex-none mx-auto w-full bg-white dark:bg-gray-900 fixed left-0 top-0 z-30 border-b border-gray-200 dark:border-gray-700">
+	<div class="w-full px-0 py-3 mx-auto lg:flex lg:justify-between max-w-8xl lg:px-3">
+		<Navbar>
+			<NavBrand href="/">
+				<span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">MapMyProject</span>
+			</NavBrand>
+			<NavHamburger />
+			<NavUl>
+				<NavLi href="/" active={true}>Home</NavLi>
+				<NavLi href="/projects">Projects</NavLi>
+				<NavLi href="/test">Test</NavLi>
+			</NavUl>
+			<DarkMode/>
+		</Navbar>
+	</div>
+	</header>
 	
 	<main>
 		<slot/>
