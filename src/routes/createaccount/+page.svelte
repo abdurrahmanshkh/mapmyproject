@@ -4,7 +4,7 @@
 </script>
 
 <main>
-  <div class="container mx-auto mt-8 mb-8 items-center">
+  <div class="container mx-auto py-10 items-center">
 
     <div class="flex flex-col space-y-6 sm:space-y-0 sm:flex-row sm:items-center sm:justify-center">
 
@@ -25,7 +25,7 @@
           </Label>
           <Button href="/projects" type="submit" class="w-full">Create account</Button>
           <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
-            Already registered? <a href="/mapmyproject" class="text-primary-700 hover:underline dark:text-primary-500"> Login to your account </a>
+            Already registered? <a href="/" class="text-primary-700 hover:underline dark:text-primary-500"> Login to your account </a>
           </div>
         </form>
       </Card>
