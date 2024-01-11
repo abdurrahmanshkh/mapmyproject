@@ -5,7 +5,7 @@
 
 <div class="app">
 
-	<header class="flex-none mx-auto w-full bg-white dark:bg-gray-900 left-0 top-0 z-30 border-b border-gray-200 dark:border-gray-700">
+	<header class="flex-none mx-auto w-full bg-white dark:bg-gray-900 left-0 top-0 z-30 border-b border-gray-400 dark:border-gray-600">
 		<div class="w-full px-0 py-3 mx-auto lg:flex lg:justify-between max-w-8xl lg:px-3">
 			<Navbar>
 				<NavBrand href="/">
@@ -27,7 +27,7 @@
 	</main>
 
 
-	<footer class="flex-none mx-auto w-full bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+	<footer class="flex-none mx-auto w-full bg-white dark:bg-gray-900 border-t border-gray-400 dark:border-gray-600">
 		<div class="w-full px-0 py-2 mx-auto lg:flex lg:justify-between max-w-8xl lg:px-3">
 			<Navbar>
 				<Footer rounded color="form" class="w-full flex items-center text-center justify-center py-3">
