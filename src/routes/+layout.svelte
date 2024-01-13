@@ -3,6 +3,10 @@
   	import { Footer, FooterCopyright, Navbar, NavBrand, NavLi, NavUl, NavHamburger, DarkMode} from 'flowbite-svelte';
 </script>
 
+<svelte:head>
+		<title>MapMyProject</title>
+</svelte:head>
+
 <div class="app">
 
 	<header class="flex-none mx-auto w-full bg-white dark:bg-gray-900 left-0 top-0 z-30 border-b border-gray-400 dark:border-gray-600">
