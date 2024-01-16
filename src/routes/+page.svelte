@@ -1,13 +1,79 @@
 <script>
   import { Input, Label, Card, Button, Hr} from 'flowbite-svelte';
+  //import {register,login,logout} from '../../api/controllers/authenticaton'
+
+  //use these variables for json response
+  let username=""
+  let password=""
+  let email=""
+  let error=null
   var account = true;
     function createAccount() {
       account = false;
     }
-    function login() {
+    function login1() {
       account = true;
     }
-</script>
+
+    const registerUser = async () => {
+  try {
+    const response = await fetch('http://localhost:8080/api/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username,
+        password,
+        email,
+      }),
+    }).catch((error) => {
+      throw new Error(`Network error: ${error.message}`);
+    });
+
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      error.set(`Registration failed: ${errorMessage}`);
+      return;
+    }
+
+    const data = await response.json();
+    console.log(data);
+    error.set(null);
+  } catch (err) {
+    error.set(err.message);
+  }
+};
+
+const loginUser = async () => {
+  try {
+    const response = await fetch('http://localhost:8080/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username,
+        password,
+      }),
+    }).catch((error) => {
+      throw new Error(`Network error: ${error.message}`);
+    });
+
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      error.set(`Login failed: ${errorMessage}`);
+      return;
+    }
+
+    const data = await response.json();
+    console.log(data);
+    error.set(null);
+  } catch (err) {
+    error.set(err.message);
+  }
+};
+  </script>
 
 <main>
 
@@ -34,6 +100,7 @@
     </Card>
 
     {#if account}
+    <!--****USE bind:value={variable} (for ex username) to for json response*****-->
       <Card class="w-full">
         <form class="flex flex-col  space-y-6" action="/">
           <h3 class="text-xl font-medium text-gray-900 dark:text-white text-center">
@@ -42,15 +109,18 @@
           <Hr classHr="my-8" />
           <Label class="space-y-2">
             <span>Email</span>
-            <Input type="email" name="email" placeholder="name@company.com" required />
+            <Input type="email" name="email" placeholder="name@company.com" bind:value={email} required />
           </Label>
           <Label class="space-y-2">
             <span>Your password</span>
-            <Input type="password" name="password" placeholder="•••••" required />
+            <Input type="password" name="password" placeholder="•••••" bind:value={password} required />
           </Label>
-          <Button href="/projects" type="submit" class="w-full">Login to your account</Button>
+          <Button on:click={loginUser} href="/projects" type="submit" class="w-full">Login to your account</Button>
         </form>
         <div class="mt-6 text-sm font-medium text-gray-500 dark:text-gray-300">
+          {#if $error}
+            <p class="text-red-500">{$error}</p>
+          {/if}
             Not registered?
             <button on:click={createAccount} class="text-primary-700 hover:underline dark:text-primary-500">
               Create account
@@ -66,21 +136,24 @@
           <Hr classHr="my-8" />
           <Label class="space-y-2">
             <span>Full Name</span>
-            <Input type="text" name="name" placeholder="John" required />
+            <Input type="text" name="name" placeholder="John" bind:value={username} required />
           </Label>
           <Label class="space-y-2">
             <span>Email</span>
-            <Input type="email" name="email" placeholder="name@company.com" required />
+            <Input type="email" name="email" placeholder="name@company.com" bind:value={email} required />
           </Label>
           <Label class="space-y-2">
             <span>Your password</span>
-            <Input type="password" name="password" placeholder="•••••" required />
+            <Input type="password" name="password" placeholder="•••••" bind:value={password} required />
           </Label>
-          <Button href="/projects" type="submit" class="w-full">Create account</Button>
+          <Button  on:click={registerUser} type="submit" class="w-full">Create account</Button>
         </form>
         <div class="mt-6 text-sm font-medium text-gray-500 dark:text-gray-300">
+          {#if $error}
+            <p class="text-red-500">{$error}</p>
+          {/if}
             Already registered?
-            <button href="/" on:click={login} class="text-primary-700 hover:underline dark:text-primary-500">
+            <button href="/" on:click={login1} class="text-primary-700 hover:underline dark:text-primary-500">
               Login to your account
             </button>
         </div>
