@@ -3,15 +3,16 @@
   //import {register,login,logout} from '../../api/controllers/authenticaton'
 
   //use these variables for json response
-  let username=""
-  let password=""
-  let email=""
+  let username="";
+  let password="";
+  let email="";
+
   let error=null
   var account = true;
-    function createAccount() {
+    function switchtosignup() {
       account = false;
     }
-    function login1() {
+    function switchtologin() {
       account = true;
     }
 
@@ -73,7 +74,8 @@ const loginUser = async () => {
     error.set(err.message);
   }
 };
-  </script>
+  
+</script>
 
 <main>
 
@@ -115,14 +117,16 @@ const loginUser = async () => {
             <span>Your password</span>
             <Input type="password" name="password" placeholder="•••••" bind:value={password} required />
           </Label>
-          <Button on:click={loginUser} href="/projects" type="submit" class="w-full">Login to your account</Button>
+          <Button on:click={loginUser} href="/projects" type="submit" class="w-full">
+            Login to your account
+          </Button>
         </form>
         <div class="mt-6 text-sm font-medium text-gray-500 dark:text-gray-300">
           {#if $error}
             <p class="text-red-500">{$error}</p>
           {/if}
             Not registered?
-            <button on:click={createAccount} class="text-primary-700 hover:underline dark:text-primary-500">
+            <button on:click={switchtosignup} class="text-primary-700 hover:underline dark:text-primary-500">
               Create account
             </button>
         </div>
@@ -146,14 +150,16 @@ const loginUser = async () => {
             <span>Your password</span>
             <Input type="password" name="password" placeholder="•••••" bind:value={password} required />
           </Label>
-          <Button  on:click={registerUser} type="submit" class="w-full">Create account</Button>
+          <Button href="/projects" on:click={registerUser} type="submit" class="w-full">
+            Create account
+          </Button>
         </form>
         <div class="mt-6 text-sm font-medium text-gray-500 dark:text-gray-300">
           {#if $error}
             <p class="text-red-500">{$error}</p>
           {/if}
             Already registered?
-            <button href="/" on:click={login1} class="text-primary-700 hover:underline dark:text-primary-500">
+            <button on:click={switchtologin} class="text-primary-700 hover:underline dark:text-primary-500">
               Login to your account
             </button>
         </div>
