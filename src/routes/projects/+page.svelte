@@ -35,28 +35,28 @@ import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
       projectId: 1,
       srNo: 1,
       taskName: "Task 1",
-      contributors: "John Doe",
+      contributors: "Suyash Saraf",
       progress: "In Progress"
     },
     {
       projectId: 1,
       srNo: 2,
       taskName: "Task 2",
-      contributors: "Jane Smith",
+      contributors: "Abdur Rehman",
       progress: "Completed"
     },
     {
       projectId: 1,
       srNo: 3,
       taskName: "Task 3",
-      contributors: "Alex Johnson",
+      contributors: "Ritika Jain",
       progress: "In Progress"
     },
     {
       projectId: 1,
       srNo: 4,
       taskName: "Task 4",
-      contributors: "Sarah Williams",
+      contributors: "Shree Ganesh",
       progress: "Not Started"
     },
   ];
@@ -186,11 +186,12 @@ import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
                     <AdjustmentsVerticalSolid size="sm" />
                     Create New Task
                   </div>
-                  <div class="gap-6 lg:grid grid-cols-2">
-                    <Input type="text" placeholder="Task Name" bind:value={newTaskName} />
-                    <Input type="text" placeholder="Contributors" bind:value={newTaskContributors} />
-                    <Button class="col-span-2" on:click={() => addTask(project.id)}>Add Task</Button>
-                  </div>
+                  <div class="gap-6 lg:grid grid-cols-5">
+                    <Input class="col-span-2" type="text" placeholder="Task Name" bind:value={newTaskName} />
+                    <Input class="col-span-2" type="text" placeholder="Contributors" bind:value={newTaskContributors} />
+                      <Button on:click={() => addTask(project.id)}>
+                        Add Task
+                      </Button>
                 </TabItem>
               </Tabs>
             </AccordionItem>
@@ -202,19 +203,27 @@ import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
 
       {#if !createProject}
       <div class="mt- gap-4 items-center mx-auto max-w-screen-xl lg:grid lg:grid-cols-1">
-        <Button class="" on:click={createProjectOn}>Create New Project</Button>
+        <Button class="" on:click={createProjectOn}>
+          Create New Project
+        </Button>
       </div>
       {:else}
         <h5 class="mb-6 text-3xl font-bold text-gray-900 dark:text-white text-center">
           Create New Project
         </h5>
         <div class="lg:grid lg:grid-cols-1">
-          <Input type="text" id="projectName" placeholder="Project Name" required class="mb-5" bind:value={projectName} />
-          <Textarea type="text" id="projectDescription" placeholder="Project Description" required class="mb-5" rows="6" bind:value={projectDescription} />
+          <Input type="text" id="projectName" placeholder="Project Name" required class="mb-5"
+          bind:value={projectName} />
+          <Textarea type="text" id="projectDescription" placeholder="Project Description" required class="mb-5" rows="6"
+          bind:value={projectDescription} />
           
           <div class="mt- gap-4 items-center mx-auto max-w-screen-xl lg:grid lg:grid-cols-2">
-            <Button color="green" class="max-w-30" on:click={addProject}>Add Project</Button>
-            <Button color="red" class="" on:click={clearProject}>Clear</Button>
+            <Button color="green" class="max-w-30" on:click={addProject}>
+              Add Project
+            </Button>
+            <Button color="red" class="" on:click={clearProject}>
+              Clear
+            </Button>
           </div>
         </div>
       {/if}
