@@ -19,6 +19,7 @@
 				<NavUl>
 					<NavLi href="/" active={true}>Home</NavLi>
 					<NavLi href="/projects">Projects</NavLi>
+					<NavLi href="/dashboard">Dashboard</NavLi>					
 				</NavUl>
 				<DarkMode/>
 			</Navbar>

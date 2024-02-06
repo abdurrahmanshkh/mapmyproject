@@ -5,7 +5,6 @@
   import { GridSolid, AdjustmentsVerticalSolid, ClipboardSolid } from 'flowbite-svelte-icons';
   import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Progressbar, Modal } from 'flowbite-svelte';
 import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
-  let popupModal = false;
 
   var projects = [
     {
@@ -104,6 +103,18 @@ import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
     tasks = tasks.filter(task => task.srNo !== taskId);
   }
 
+  let createTask = false;
+
+  function createTaskOn() {
+    createTask = true;
+  }
+
+  function clearTask() {
+    newTaskName = "";
+    newTaskContributors = "";
+    createTask = false;
+  }
+
   function calculateProjectCompletionStatus(projectId) {
     const projectTasks = tasks.filter(t => t.projectId === projectId);
     const completedTasks = projectTasks.filter(t => t.progress === "Completed").length;
@@ -111,6 +122,13 @@ import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
 
     return totalTasks === 0 ? 0 : (completedTasks / totalTasks) * 100;
   }
+
+  let popupModal = false;
+
+  function closeModal() {
+    popupModal = false;
+  }
+
 </script>
 
 <main>
@@ -169,7 +187,9 @@ import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
                                 <div class="text-center">
                                     <ExclamationCircleOutline class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" />
                                     <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete this Task?</h3>
-                                    <Button color="red" class="me-2" on:click={() => deleteTask(task.srNo)}>Yes, I'm sure</Button>
+                                    <Button color="red" class="me-2" on:click={() => deleteTask(task.srNo)} on:click={closeModal}>
+                                      Yes, I'm sure
+                                    </Button>
                                     <Button color="alternative">No, cancel</Button>
                                 </div>
                                 </Modal>
@@ -179,20 +199,41 @@ import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
                       {/each}
                     </TableBody>
                   </Table>
+
+                  <Hr/>
+
+                  {#if !createTask}
+                  <div class="text-center">
+                    <Button class="max-w-50 px-10" on:click={createTaskOn}>
+                      Create New Task
+                    </Button>
+                  </div>
+                  {:else}
+                  <Card class="w-full max-w-full">
+
+                  <h5 class="mb-6 col-span-4 text-3xl font-bold text-gray-900 dark:text-white text-center">
+                    Create New Task
+                  </h5>
+
+                  <div class="gap-6 lg:grid grid-cols-9 mb-6">
+                    <Input class="col-span-4" type="text" placeholder="Task Name" bind:value={newTaskName} />
+                    <Input class="col-span-4" type="text" placeholder="Contributors" bind:value={newTaskContributors} />
+                    <Button class="" color="red" on:click={clearTask}>
+                      Clear
+                    </Button>
+                  </div>
+
+                  <div class="text-center">
+                  <Button class="w-40" color="green" on:click={() => addTask(project.id)}>
+                    Add Task
+                  </Button>
+                  </div>
+                  
+                  </Card>
+                  {/if}
+                  
                 </TabItem>
 
-                <TabItem>
-                  <div slot="title" class="flex items-center gap-2">
-                    <AdjustmentsVerticalSolid size="sm" />
-                    Create New Task
-                  </div>
-                  <div class="gap-6 lg:grid grid-cols-5">
-                    <Input class="col-span-2" type="text" placeholder="Task Name" bind:value={newTaskName} />
-                    <Input class="col-span-2" type="text" placeholder="Contributors" bind:value={newTaskContributors} />
-                      <Button on:click={() => addTask(project.id)}>
-                        Add Task
-                      </Button>
-                </TabItem>
               </Tabs>
             </AccordionItem>
           </div>
@@ -200,7 +241,7 @@ import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
       </Accordion>
 
       <Hr classHr="mt-3 " />
-
+      
       {#if !createProject}
       <div class="mt- gap-4 items-center mx-auto max-w-screen-xl lg:grid lg:grid-cols-1">
         <Button class="" on:click={createProjectOn}>
@@ -208,6 +249,7 @@ import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
         </Button>
       </div>
       {:else}
+        <Card class="w-full max-w-full">
         <h5 class="mb-6 text-3xl font-bold text-gray-900 dark:text-white text-center">
           Create New Project
         </h5>
@@ -226,6 +268,7 @@ import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
             </Button>
           </div>
         </div>
+        </Card>
       {/if}
 
     </Card>
