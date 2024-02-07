@@ -80,11 +80,11 @@ const loginUser = async () => {
 <main>
 
   <div class="container mx-auto py-10 items-center lg:grid lg:grid-cols-3 gap-10">
-    <Card class="text-center col-span-2" size="" padding="xl">
+    <Card class="border-gray-300 dark:border-gray-700 border-2 text-center col-span-2" size="" padding="xl">
       <h5 class="mb-0 text-3xl font-bold text-gray-900 dark:text-white">
         MapMyProject
       </h5>
-      <Hr classHr="my-4" />
+      <Hr classHr="my-4 h-1" />
       <p class="mb-3 text-base text-gray-500 sm:text-lg dark:text-gray-400">
         Welcome to MapMyProject, a cutting-edge project management system designed to streamline 
         your project workflows and elevate collaboration among team members. MapMyProject empowers 
@@ -102,13 +102,12 @@ const loginUser = async () => {
     </Card>
 
     {#if account}
-    <!--****USE bind:value={variable} (for ex username) to for json response*****-->
-      <Card class="w-full">
+      <Card class="w-full border-gray-300 dark:border-gray-700 border-2">
         <form class="flex flex-col  space-y-6" action="/">
           <h3 class="text-xl font-medium text-gray-900 dark:text-white text-center">
             Ready to get started? Login to MapMyProject and experience a new era of project management.
           </h3>
-          <Hr classHr="my-8" />
+          <Hr classHr="my-8 h-1" />
           <Label class="space-y-2">
             <span>Email</span>
             <Input type="email" name="email" placeholder="name@company.com" bind:value={email} required />
@@ -132,12 +131,12 @@ const loginUser = async () => {
         </div>
       </Card>
     {:else}
-      <Card class="w-full">
+      <Card class="w-full border-gray-300 dark:border-gray-700 border-2">
         <form class="flex flex-col space-y-6" action="/">
           <h3 class="text-xl font-medium text-gray-900 dark:text-white">
             Create your MapMyProject account
           </h3>
-          <Hr classHr="my-8" />
+          <Hr classHr="my-8 h-1" />
           <Label class="space-y-2">
             <span>Full Name</span>
             <Input type="text" name="name" placeholder="John" bind:value={username} required />

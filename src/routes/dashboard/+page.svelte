@@ -1,5 +1,5 @@
 <script>
-  import { Timeline, TimelineItem } from 'flowbite-svelte';
+  import { Timeline, TimelineItem, Hr } from 'flowbite-svelte';
   import { ArrowRightOutline } from 'flowbite-svelte-icons';
 
   import { Chart, Card, A, Button, Dropdown, DropdownItem, Popover, Tooltip } from 'flowbite-svelte';
@@ -68,14 +68,14 @@
 
 <main>
     <div class="container py-10 mx-auto lg:grid grid-cols-5 gap-8">
-
-    <Card class="w-full max-w-full col-span-3">
+    
+    <Card class="w-full max-w-full col-span-3 border-gray-300 dark:border-gray-700 border-2">
       <h5 class="mb-3 text-3xl font-bold leading-none text-gray-900 dark:text-white">Project Timeline</h5>
-      <p class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Sed euismod, nisl ac ultricies consectetur, velit elit aliquet elit, id aliquam nunc nunc id mauris. Sed euismod, nisl ac ultricies consectetur, velit elit aliquet elit, id aliquam nunc nunc id mauris.</p>
+      <Hr classHr="my-3 h-1" />
+      <p class="mb-6 text-base font-normal text-gray-500 dark:text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Sed euismod, nisl ac ultricies consectetur, velit elit aliquet elit, id aliquam nunc nunc id mauris. Sed euismod, nisl ac ultricies consectetur, velit elit aliquet elit, id aliquam nunc nunc id mauris.</p>
     <Timeline>
       <TimelineItem title="Application UI code in Tailwind CSS" date="February 2022">
         <p class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">Get access to over 20+ pages including a dashboard layout, charts, kanban board, calendar, and pre-order E-commerce & Marketing pages.</p>
-        <Button color="alternative">Learn more<ArrowRightOutline class="ms-2 w-3 h-3" /></Button>
       </TimelineItem>
       <TimelineItem title="Application UI code in Tailwind CSS" date="March 2022">
         <p class="text-base font-normal text-gray-500 dark:text-gray-400">All of the pages and components are first designed in Figma and we keep a parity between the two versions even as we update the project.</p>
@@ -86,8 +86,8 @@
     </Timeline>
     </Card>
 
-    <Card class="w-full max-w-full col-span-2">
-      <div class="mb-3 flex justify-between items-start w-full">
+    <Card class="w-full max-w-full col-span-2 border-gray-300 dark:border-gray-700 border-2">
+      <div class="mb-4 flex justify-between items-start w-full">
         <div class="flex-col items-center">
           <div class="flex items-center mb-1">
             <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white me-1">Your team's progress</h5>

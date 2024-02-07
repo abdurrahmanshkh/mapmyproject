@@ -133,18 +133,18 @@ import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
 
 <main>
   <div class="container py-10 mx-auto">
-    <Card class="" size="" padding="xl">
+    <Card class="border-gray-300 dark:border-gray-700 border-2" size="" padding="xl">
       <div class="lg:grid lg:grid-cols-1">
         <h5 class="mb-0 text-3xl font-bold text-gray-900 dark:text-white text-center">
           All Projects
         </h5>
       </div>
-      <Hr classHr="my-4" />
+      <Hr classHr="my-4 h-1" />
 
       <Accordion>
         {#each projects as project}
           <div class="lg:grid lg:grid-cols-1 mb-5">
-            <AccordionItem class="">
+            <AccordionItem class="border-gray-300 dark:border-gray-700">
               <span slot="header">{project.name}</span>
               <Tabs style="underline">
 
@@ -200,7 +200,7 @@ import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
                     </TableBody>
                   </Table>
 
-                  <Hr/>
+                  <Hr classHr="h-1"/>
 
                   {#if !createTask}
                   <div class="text-center">
@@ -209,7 +209,7 @@ import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
                     </Button>
                   </div>
                   {:else}
-                  <Card class="w-full max-w-full">
+                  <Card class="w-full max-w-full border-gray-300 dark:border-gray-700 border-2">
 
                   <h5 class="mb-6 col-span-4 text-3xl font-bold text-gray-900 dark:text-white text-center">
                     Create New Task
@@ -240,7 +240,7 @@ import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
         {/each}
       </Accordion>
 
-      <Hr classHr="mt-3 " />
+      <Hr classHr="mt-3 h-1" />
       
       {#if !createProject}
       <div class="mt- gap-4 items-center mx-auto max-w-screen-xl lg:grid lg:grid-cols-1">
@@ -249,7 +249,8 @@ import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
         </Button>
       </div>
       {:else}
-        <Card class="w-full max-w-full">
+      <div>
+      <Card class="max-w-full border-gray-300 dark:border-gray-700 border-2">
         <h5 class="mb-6 text-3xl font-bold text-gray-900 dark:text-white text-center">
           Create New Project
         </h5>
@@ -268,7 +269,8 @@ import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
             </Button>
           </div>
         </div>
-        </Card>
+      </Card>
+      </div>
       {/if}
 
     </Card>
