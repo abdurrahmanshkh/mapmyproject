@@ -16,3 +16,25 @@ export const createProject=(req,res)=>{
         return res.status(200).json("Project successfully created")
     })
 }
+
+    export const retriveProjects=(req,res)=>{
+        const username=req.params.username
+        console.log("username : ",username)
+        const getOwnerIDQuery=`SELECT userID FROM users WHERE name=?`
+        db.query(getOwnerIDQuery,[username],(err,data)=>{
+            if(err){
+                console.error(err)
+                return res.status(500).json("internal server error")
+            }
+            console.log("data : ",data)
+            const ownerID=data[0].userID
+            const getProjectQuery=`SELECT * FROM project WHERE ownerID=?`
+            db.query(getProjectQuery,[ownerID],(err,data)=>{
+                if(err){
+                    console.error(err)
+                    return res.status(500).json("Internal server error")
+                }
+                return res.status(200).json(data)
+            })
+        })
+    }

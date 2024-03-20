@@ -4,8 +4,23 @@
   import { Tabs, TabItem } from 'flowbite-svelte';
   import { GridSolid, AdjustmentsVerticalSolid, ClipboardSolid } from 'flowbite-svelte-icons';
   import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Progressbar, Modal } from 'flowbite-svelte';
-import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
-
+  import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
+  import {onMount}from 'svelte'
+  let projectData=[]
+  onMount(async () => {
+        try {
+            const response = await fetch('http://localhost:8080/api/mark/project/list');
+            if (!response.ok) {
+                throw new Error('Failed to retrieve projects');
+            }
+            const data = await response.json();
+            console.log("data : ",data)
+            // Update the projects store with the retrieved list of projects
+            projectData.set(data);
+        } catch (error) {
+            console.error(error.message);
+        }
+    });
   var projects = [
     {
       id: 1,
@@ -132,6 +147,13 @@ import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
 </script>
 
 <main>
+  <div>
+    <ul>
+      {#each projectData as project}
+         <li>{project.projectName}</li>
+      {/each}
+     </ul>
+  </div>
   <div class="container py-10 mx-auto">
     <Card class="border-gray-300 dark:border-gray-700 border-2" size="" padding="xl">
       <div class="lg:grid lg:grid-cols-1">
@@ -275,4 +297,5 @@ import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
 
     </Card>
   </div>
+
 </main>
