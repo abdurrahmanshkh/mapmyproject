@@ -31,6 +31,9 @@ CREATE TABLE tasks(
 	parentProjectID INTEGER NOT NULL,
 	FOREIGN KEY (parentProjectID) REFERENCES project(projectID),
 	PRIMARY KEY(taskID,parentProjectID)
+	--remove the need of assigned table
+	--assignedUser INTEGER NOT NULL,
+	--FOREIGN KEY (assignedUser) REFRENCES users(userID)
 );
 CREATE TABLE assigned(
 	assignedID INTEGER PRIMARY KEY AUTO_INCREMENT,
