@@ -17,7 +17,18 @@ export const createProject=(req,res)=>{
     })
 }
 
-    export const retriveProjects=(req,res)=>{
+export const retriveProjects=(req,res)=>{
+    //todo: add userType in database
+
+    //this is gonna be a pain in the neck
+    
+    //if userType==manager
+    //retrive req.user.userID
+    //select projects where userID=ownerID
+
+    //if userType==user
+    //retrive req.user.userID
+    //select projects where from tasks where taskID in (select assignedTaskID FROM assigned WHERE assignedUserID=req.user.userID)
         const username=req.params.username
         console.log("username : ",username)
         const getOwnerIDQuery=`SELECT userID FROM users WHERE name=?`
@@ -37,4 +48,5 @@ export const createProject=(req,res)=>{
                 return res.status(200).json(data)
             })
         })
-    }
+}
+
