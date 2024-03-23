@@ -58,13 +58,20 @@ export const login=(req,res)=>{
         if(!hashedPassword){
             return res.status(400).json("incorrect password")
         }
-
-        const token=jwt.sign({userID:data[0].userID},"secretKey")
+        const user={
+            userID:data[0].userID,
+            isManager:data[0].isManager
+        }
+        console.log("ismanager : ",user.isManager)
+        const token=jwt.sign(user,"secretKey")
         const{password,...others}=data[0]
         console.log("token : ",token)
         res
         .cookie("accessToken",token,{
             httpOnly: true,
+        })
+        .cookie("isManager",data[0].isManager,{
+            httpOnly:true,
         })
         .status(200)
         .json(others);

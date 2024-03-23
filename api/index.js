@@ -26,7 +26,7 @@ app.use("/api/project",taskRoute)
 app.use("/api",userRoute)
 app.use("/api/project",projectRoute)
 //localhost:8080/api/project/create uses requireAuth middleware which only allows authenticated users to create new projects 
-app.use("/api",projectRoute)
+app.use("/api/project",projectRoute)
 app.listen(8080,()=>{
     console.log("API working")
 })

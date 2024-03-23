@@ -2,6 +2,10 @@ import {db} from "../connect.js"
 
 export const createProject=(req,res)=>{
     const userID=req.user.userID
+    const isManager=req.user.isManager
+    if(!isManager){
+        return res.status(500).json("You're not manager")
+    }
     console.log("in createProject : ",req.user.userID)
     const projectName=req.body.projectName
     const projectDescription=req.body.projectDescription
@@ -9,44 +13,36 @@ export const createProject=(req,res)=>{
     const projectStartDate=new Date().toISOString().slice(0, 19).replace("T", " ")
     const insertQuery=`INSERT INTO project(projectName,projectDescription,projectStartDate,projectDueDate,ownerID)VALUES(?)`
     const values=[projectName,projectDescription,projectStartDate,projectDueDate,userID]
-    db.query(insertQuery,[values],(err,data)=>{
+    db.query(insertQuery,[values],(err)=>{
         if(err){
+            console.error("Error creating project : ",err)
             return res.status(500).json(err)
         }
         return res.status(200).json("Project successfully created")
     })
 }
 
-export const retriveProjects=(req,res)=>{
-    //todo: add userType in database
-
-    //this is gonna be a pain in the neck
-    
-    //if userType==manager
-    //retrive req.user.userID
-    //select projects where userID=ownerID
-
-    //if userType==user
-    //retrive req.user.userID
-    //select projects where from tasks where taskID in (select assignedTaskID FROM assigned WHERE assignedUserID=req.user.userID)
-        const username=req.params.username
-        console.log("username : ",username)
-        const getOwnerIDQuery=`SELECT userID FROM users WHERE name=?`
-        db.query(getOwnerIDQuery,[username],(err,data)=>{
+export const retrieveProject=(req,res)=>{
+    const userID=req.user.userID
+    const isManager=req.user.isManager
+    if(isManager){
+        const managerProjectQuery="SELECT projectID,projectName,projectStartDate,projectDueDate FROM project WHERE ownerID=?"
+        db.query(managerProjectQuery,[userID],(err,data)=>{
             if(err){
-                console.error(err)
-                return res.status(500).json("internal server error")
+                console.log("Error retriving projects : ",err)
+                return res.status(500).json("Internal server error")
             }
-            console.log("data : ",data)
-            const ownerID=data[0].userID
-            const getProjectQuery=`SELECT * FROM project WHERE ownerID=?`
-            db.query(getProjectQuery,[ownerID],(err,data)=>{
-                if(err){
-                    console.error(err)
-                    return res.status(500).json("Internal server error")
-                }
-                return res.status(200).json(data)
-            })
+            return res.status(200).json(data)
         })
+    }else{
+        const contributerProjectQuery="SELECT projectID,projectName,projectStartDate,projectDueDate FROM project WHERE projectID in (SELECT parentProjectID from tasks WHERE assignedUser=?)"
+        db.query(contributerProjectQuery,[userID],(err,data)=>{
+            if(err){
+                console.error("Error retriving contributer's project : ",err)
+                return res.status(500).json("Internal server error")
+            }
+            return res.status(200).json(data)
+        })
+    }
 }
 
