@@ -9,40 +9,37 @@
   let projectData=[]
   onMount(async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/mark/project/list');
+            const response = await fetch('http://localhost:8080/api/project/list',{
+              method: 'GET',
+
+              credentials: 'include'
+            });
             if (!response.ok) {
                 throw new Error('Failed to retrieve projects');
             }
             const data = await response.json();
             console.log("data : ",data)
-            // Update the projects store with the retrieved list of projects
-            projectData.set(data);
+            projectData=data
         } catch (error) {
             console.error(error.message);
         }
     });
-  var projects = [
-    {
-      id: 1,
-      name: "Project 1",
-      description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illo ab necessitatibus sint explicabo ..."
-    },
-    {
-      id: 2,
-      name: "Project 2",
-      description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illo ab necessitatibus sint explicabo ..."
-    },
-    {
-      id: 3,
-      name: "Project 3",
-      description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illo ab necessitatibus sint explicabo ..."
-    },
-    {
-      id: 4,
-      name: "Project 4",
-      description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illo ab necessitatibus sint explicabo ..."
-    },
-  ];
+
+
+
+ async function fetchTasks(projectID) {
+    const response = await fetch(`http://localhost:8080/api/project/${projectID}/task`, {
+      method: 'GET',
+      credentials: 'include', // Include credentials for session management
+    });
+    const tasks = await response.json();
+    console.log(tasks); // Handle the tasks data as needed
+ }
+
+ // Function to handle project click
+ function handleProjectClick(projectID) {
+    fetchTasks(projectID);
+ }
 
   var tasks = [
     {
@@ -147,13 +144,7 @@
 </script>
 
 <main>
-  <div>
-    <ul>
-      {#each projectData as project}
-         <li>{project.projectName}</li>
-      {/each}
-     </ul>
-  </div>
+
   <div class="container py-10 mx-auto">
     <Card class="border-gray-300 dark:border-gray-700 border-2" size="" padding="xl">
       <div class="lg:grid lg:grid-cols-1">
@@ -164,10 +155,10 @@
       <Hr classHr="my-4 h-1" />
 
       <Accordion>
-        {#each projects as project}
+        {#each projectData as project}
           <div class="lg:grid lg:grid-cols-1 mb-5">
             <AccordionItem class="border-gray-300 dark:border-gray-700">
-              <span slot="header">{project.name}</span>
+              <span slot="header" on:click={()=>handleProjectClick(project.projectID)}>{project.projectName}</span>
               <Tabs style="underline">
 
                 <TabItem open>
@@ -177,9 +168,9 @@
                   </div>
                   <p class="text-gray-900 dark:text-gray-100 mb-5">
                     <b>Overview:</b><br>
-                    {project.description}
+                    {project.projectDescription}
                   </p>
-                  <Progressbar progress={calculateProjectCompletionStatus(project.id)} labelOutside="Project Progress" />
+                  <Progressbar progress={calculateProjectCompletionStatus(project.projectID)} labelOutside="Project Progress" />
                 </TabItem>
 
                 <TabItem>

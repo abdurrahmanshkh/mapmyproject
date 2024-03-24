@@ -25,8 +25,9 @@ export const createProject=(req,res)=>{
 export const retrieveProject=(req,res)=>{
     const userID=req.user.userID
     const isManager=req.user.isManager
+    console.log(isManager,userID)
     if(isManager){
-        const managerProjectQuery="SELECT projectID,projectName,projectStartDate,projectDueDate FROM project WHERE ownerID=?"
+        const managerProjectQuery="SELECT projectID,projectName,projectDescription,projectStartDate,projectDueDate FROM project WHERE ownerID=?"
         db.query(managerProjectQuery,[userID],(err,data)=>{
             if(err){
                 console.log("Error retriving projects : ",err)
@@ -35,7 +36,7 @@ export const retrieveProject=(req,res)=>{
             return res.status(200).json(data)
         })
     }else{
-        const contributerProjectQuery="SELECT projectID,projectName,projectStartDate,projectDueDate FROM project WHERE projectID in (SELECT parentProjectID from tasks WHERE assignedUser=?)"
+        const contributerProjectQuery="SELECT projectID,projectName,projectDescription,projectStartDate,projectDueDate FROM project WHERE projectID in (SELECT parentProjectID from tasks WHERE assignedUser=?)"
         db.query(contributerProjectQuery,[userID],(err,data)=>{
             if(err){
                 console.error("Error retriving contributer's project : ",err)

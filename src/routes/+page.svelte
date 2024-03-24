@@ -50,6 +50,7 @@ const loginUser = async () => {
   try {
     const response = await fetch('http://localhost:8080/api/auth/login', {
       method: 'POST',
+      credentials:'include',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -110,7 +111,7 @@ const loginUser = async () => {
           <Hr classHr="my-8 h-1" />
           <Label class="space-y-2">
             <span>Email</span>
-            <Input type="email" name="email" placeholder="name@company.com" bind:value={email} required />
+            <Input type="username" name="username" placeholder="mark" bind:value={username} required />
           </Label>
           <Label class="space-y-2">
             <span>Your password</span>

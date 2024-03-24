@@ -62,16 +62,18 @@ export const login=(req,res)=>{
             userID:data[0].userID,
             isManager:data[0].isManager
         }
-        console.log("ismanager : ",user.isManager)
+        console.log(data)
         const token=jwt.sign(user,"secretKey")
         const{password,...others}=data[0]
         console.log("token : ",token)
         res
         .cookie("accessToken",token,{
             httpOnly: true,
+            sameSite: 'none',
         })
         .cookie("isManager",data[0].isManager,{
             httpOnly:true,
+            sameSite: 'none',
         })
         .status(200)
         .json(others);
