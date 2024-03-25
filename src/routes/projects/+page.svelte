@@ -12,7 +12,6 @@
         try {
             const response = await fetch('http://localhost:8080/api/project/list',{
               method: 'GET',
-
               credentials: 'include'
             });
             if (!response.ok) {
