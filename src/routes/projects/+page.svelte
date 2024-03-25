@@ -7,6 +7,7 @@
   import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
   import {onMount}from 'svelte'
   let projectData=[]
+  let taskData=[]
   onMount(async () => {
         try {
             const response = await fetch('http://localhost:8080/api/project/list',{
@@ -33,6 +34,8 @@
       credentials: 'include', // Include credentials for session management
     });
     const tasks = await response.json();
+    taskData=tasks
+    console.log("Parent project id ",projectID)
     console.log(tasks); // Handle the tasks data as needed
  }
 
@@ -158,9 +161,9 @@
         {#each projectData as project}
           <div class="lg:grid lg:grid-cols-1 mb-5">
             <AccordionItem class="border-gray-300 dark:border-gray-700">
-              <span slot="header" on:click={()=>handleProjectClick(project.projectID)}>{project.projectName}</span>
+              <span slot="header">{project.projectName}</span>
               <Tabs style="underline">
-
+         
                 <TabItem open>
                   <div slot="title" class="flex items-center gap-2">
                     <GridSolid size="sm" />
@@ -173,26 +176,25 @@
                   <Progressbar progress={calculateProjectCompletionStatus(project.projectID)} labelOutside="Project Progress" />
                 </TabItem>
 
-                <TabItem>
+                <TabItem on:click={()=>handleProjectClick(project.projectID)}>
                   <div slot="title" class="flex items-center gap-2">
                     <ClipboardSolid size="sm" />
                     Tasks
                   </div>
                   <Table>
                     <TableHead>
-                      <TableHeadCell>Sr. No.</TableHeadCell>
                       <TableHeadCell>Task Name</TableHeadCell>
                       <TableHeadCell>Contributors</TableHeadCell>
-                      <TableHeadCell>Progress</TableHeadCell>
-                      <TableHeadCell>Action</TableHeadCell>
+                      <TableHeadCell>Status</TableHeadCell>
+                      <TableHeadCell>Due Date</TableHeadCell>
                     </TableHead>
                     <TableBody class="">
-                      {#each tasks.filter(t => t.projectId === project.id) as task}
+                      {#each taskData as task}
                         <TableBodyRow>
-                          <TableBodyCell>{task.srNo}</TableBodyCell>
                           <TableBodyCell>{task.taskName}</TableBodyCell>
-                          <TableBodyCell>{task.contributors}</TableBodyCell>
-                          <TableBodyCell>{task.progress}</TableBodyCell>
+                          <TableBodyCell>{task.assignedUser}</TableBodyCell>
+                          <TableBodyCell>{task.taskStatus}</TableBodyCell>
+                          <TableHeadCell>{task.taskDueDate}</TableHeadCell>
                           <TableBodyCell>
                             <Button color="red" on:click={() => (popupModal = true)}>Delete</Button>
 

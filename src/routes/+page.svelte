@@ -6,14 +6,24 @@
   let username="";
   let password="";
   let email="";
-
-  let error=null
+  let isManager=true
+  let accountType=[{text:'Manager'},{text:'Contributer'}]
+  let selected
+  let answer=''
+  let error
   var account = true;
     function switchtosignup() {
       account = false;
     }
     function switchtologin() {
       account = true;
+    }
+    function setAccountType(answer){
+      if(answer==='Manager'){
+        isManager=true
+      }else{
+        isManager=false
+      }
     }
 
   const registerUser = async () => {
@@ -27,6 +37,7 @@
         username,
         password,
         email,
+        isManager
       }),
     }).catch((error) => {
       throw new Error(`Network error: ${error.message}`);
@@ -150,10 +161,21 @@ const loginUser = async () => {
             <span>Your password</span>
             <Input type="password" name="password" placeholder="•••••" bind:value={password} required />
           </Label>
+          <Label class="space-y-2">
+            <!-- <span>Account Type</span>
+            <select bind:value={selected} on:change={answer=''}>
+              {#each accountType as account}
+                <option value={account}>
+                {account.text}
+                </option>
+              {/each}
+          </select> -->
+          </Label>
+          <Label>
           <Button href="/projects" on:click={registerUser} type="submit" class="w-full">
             Create account
           </Button>
-        </form>
+          </Label>
         <div class="mt-6 text-sm font-medium text-gray-500 dark:text-gray-300">
           {#if $error}
             <p class="text-red-500">{$error}</p>
@@ -163,6 +185,7 @@ const loginUser = async () => {
               Login to your account
             </button>
         </div>
+        </form>
       </Card>
     {/if}
 

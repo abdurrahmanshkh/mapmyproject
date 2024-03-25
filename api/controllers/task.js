@@ -48,6 +48,65 @@ export const createTask = (req, res) => {
 };
 
 
+export const updateTaskStatus=(req,res)=>{
+    const isManager=req.user.isManager
+
+    const taskID=req.params.taskID
+    const taskStatus=req.body.status
+    const updateTaskQuery="UPDATE tasks SET taskStatus=? WHERE taskID=?"
+    db.query(updateTaskQuery,[taskStatus,taskID],(err)=>{
+        if(err){
+            console.log("Error updating task status : ",err)
+            return res.body(500).json("Internal server error")
+        }
+        return res.body(200).json("Task Status Updated Successfully")
+    })
+}
+
+export const updateDueDate=(req,res)=>{
+    const isManager=req.user.isManager
+    if(!isManager){
+        return res.status(500).json("You're not manager")
+    }
+    const taskDueDate = new Date(req.body.taskDueDate); // Convert to Date object
+    const taskID=req.params.taskID
+    const updateDueDateQuery="UPDATE tasks SET taskDueDate=? WHERE taskID=?"
+    db.query(updateTaskQuery,[taskStatus,taskID],(err)=>{
+        if(err){
+            console.log("Error updating task status : ",err)
+            return res.body(500).json("Internal server error")
+        }
+        return res.body(200).json("Task Status Updated Successfully")
+    })
+}
+
+export const updateAssignedUser=(req,res)=>{
+    const isManager=req.user.isManager
+    if(!isManager){
+        return res.status(500).json("You're not manager")
+    }
+    const assignedUsername = req.body.assignedUsername // Convert to Date object
+    const taskID=req.params.taskID
+    const getUserIDQuery="SELECT userID FROM users WHERE name=?"
+    const updateAssignedUserQuery="UPDATE tasks SET assignedUser=? WHERE taskID=?"
+
+    db.query(getUserIDQuery,[assignedUsername],(err,data)=>{
+        if(err){
+            console.log("Error updating task status : ",err)
+            return res.status(500).json("Internal server error")
+        }
+        const assignedUserID=data[0].userID
+        db.query(updateAssignedUserQuery,[assignedUserID,taskID],(err)=>{
+            if(err){
+                console.log("Error updating task status : ",err)
+                return res.body(500).json("Internal server error")
+            }
+            return res.status(200).json("Contributer Updated Successfully")
+        })
+    
+    })
+}
+
 export const retrieveTask = (req, res) => {
     const parentProjectID = req.params.id; // Use req.params.id instead of req.param.id
     const getTaskQuery = "SELECT taskID,taskName,taskDescription,taskStatus,taskStartDate,taskDueDate,assignedUser FROM tasks WHERE parentProjectID=?";
