@@ -4,7 +4,7 @@ export const createProject=(req,res)=>{
     const userID=req.user.userID
     const isManager=req.user.isManager
     if(!isManager){
-        return res.status(500).json("You're not manager")
+        return res.status(500).json("Only manager is allowed to perform this action")
     }
     console.log("in createProject : ",req.user.userID)
     const projectName=req.body.projectName
@@ -42,8 +42,21 @@ export const retrieveProject=(req,res)=>{
                 console.error("Error retriving contributer's project : ",err)
                 return res.status(500).json("Internal server error")
             }
+        
             return res.status(200).json(data)
         })
     }
 }
 
+export const calculateProgress=(req,res)=>{
+    const projectID=req.params.id
+    const statusQuery="SELECT taskStatus FROM tasks WHERE parentProjectID=?"
+    db.query(statusQuery,[projectID],(err,data)=>{
+        if(err){
+            console.log(err)
+            return res.status(500).json("Internal server error")
+        }
+        const completedPercent=data.filter((data)=>data.taskStatus=='completed').length*100/data.length
+        return res.status(200).json(completedPercent)
+    })
+}

@@ -4,21 +4,18 @@
   import { Tabs, TabItem } from 'flowbite-svelte';
   import { GridSolid, AdjustmentsVerticalSolid, ClipboardSolid } from 'flowbite-svelte-icons';
   import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Progressbar, Modal } from 'flowbite-svelte';
-  import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
   import {onMount}from 'svelte'
+  import { Spinner } from 'flowbite-svelte';
   let projectData=[]
   let taskData=[]
+  let completedPercent=0
   onMount(async () => {
         try {
             const response = await fetch('http://localhost:8080/api/project/list',{
               method: 'GET',
               credentials: 'include'
             });
-            if (!response.ok) {
-                throw new Error('Failed to retrieve projects');
-            }
             const data = await response.json();
-            console.log("data : ",data)
             projectData=data
         } catch (error) {
             console.error(error.message);
@@ -34,8 +31,7 @@
     });
     const tasks = await response.json();
     taskData=tasks
-    console.log("Parent project id ",projectID)
-    console.log(tasks); // Handle the tasks data as needed
+    console.log(taskData); // Handle the tasks data as needed
  }
 
  // Function to handle project click
@@ -43,36 +39,38 @@
     fetchTasks(projectID);
  }
 
-  var tasks = [
-    {
-      projectId: 1,
-      srNo: 1,
-      taskName: "Task 1",
-      contributors: "Suyash Saraf",
-      progress: "In Progress"
-    },
-    {
-      projectId: 1,
-      srNo: 2,
-      taskName: "Task 2",
-      contributors: "Abdur Rehman",
-      progress: "Completed"
-    },
-    {
-      projectId: 1,
-      srNo: 3,
-      taskName: "Task 3",
-      contributors: "Ritika Jain",
-      progress: "In Progress"
-    },
-    {
-      projectId: 1,
-      srNo: 4,
-      taskName: "Task 4",
-      contributors: "Shree Ganesh",
-      progress: "Not Started"
-    },
-  ];
+ async function updateTask(taskID,status) {
+    const response = await fetch(`http://localhost:8080/api/task/${taskID}/update/status`, {
+      method: 'POST',
+      credentials: 'include', // Include credentials for session management
+      headers: {
+        'Content-Type':'application/json',
+      },
+      body: JSON.stringify({status})
+
+    });
+    const tasks = await response.json();
+    taskData=tasks
+    console.log(taskData); // Handle the tasks data as needed
+ }
+ function updateTaskClick(taskID,status) {
+    updateTask(taskID,status);
+ }
+
+ async function getProgress(projectID){
+    const response=await fetch(`http://localhost:8080/api/project/${projectID}/progress`,{
+      method: 'GET',
+      credentials:'include',
+    })
+
+    const data=await response.json()
+    console.log(data,"project ",projectID)
+    completedPercent=data
+    return parseInt(data) 
+ }
+
+//DO NOT DELETE THIS VARIABLE
+ var tasks=[]
 
   var createProject = false;
   var projectName = "";
@@ -129,13 +127,7 @@
     createTask = false;
   }
 
-  function calculateProjectCompletionStatus(projectId) {
-    const projectTasks = tasks.filter(t => t.projectId === projectId);
-    const completedTasks = projectTasks.filter(t => t.progress === "Completed").length;
-    const totalTasks = projectTasks.length;
-
-    return totalTasks === 0 ? 0 : (completedTasks / totalTasks) * 100;
-  }
+  
 
   let popupModal = false;
 
@@ -172,7 +164,16 @@
                     <b>Overview:</b><br>
                     {project.projectDescription}
                   </p>
-                  <Progressbar progress={calculateProjectCompletionStatus(project.projectID)} labelOutside="Project Progress" />
+                  {#await getProgress(project.projectID)}
+                  <div>
+                    <Button outline color="dark">
+                      <Spinner class="me-3" size="4" />
+                      Loading ...
+                    </Button>
+                  </div>
+                  {:then data} 
+                  <Progressbar progress={data} labelOutside="Project Progress" />
+                  {/await}
                 </TabItem>
 
                 <TabItem on:click={()=>handleProjectClick(project.projectID)}>
@@ -182,32 +183,22 @@
                   </div>
                   <Table>
                     <TableHead>
-                      <TableHeadCell>Task Name</TableHeadCell>
-                      <TableHeadCell>Contributors</TableHeadCell>
-                      <TableHeadCell>Status</TableHeadCell>
+                      <TableHeadCell>Name</TableHeadCell>
+                      <TableHeadCell>Description</TableHeadCell>
                       <TableHeadCell>Due Date</TableHeadCell>
+                      <TableHeadCell>Status</TableHeadCell>
                     </TableHead>
                     <TableBody class="">
-                      {#each taskData as task}
+                      {#each taskData as task }
                         <TableBodyRow>
                           <TableBodyCell>{task.taskName}</TableBodyCell>
-                          <TableBodyCell>{task.assignedUser}</TableBodyCell>
-                          <TableBodyCell>{task.taskStatus}</TableBodyCell>
-                          <TableHeadCell>{task.taskDueDate}</TableHeadCell>
+                          <TableBodyCell>{task.taskDescription}</TableBodyCell>
+                          <TableBodyCell>{task.taskDueDate}</TableBodyCell>
                           <TableBodyCell>
-                            <Button color="red" on:click={() => (popupModal = true)}>Delete</Button>
-
-                                <Modal bind:open={popupModal} size="xs" autoclose>
-                                <div class="text-center">
-                                    <ExclamationCircleOutline class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" />
-                                    <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete this Task?</h3>
-                                    <Button color="red" class="me-2" on:click={() => deleteTask(task.srNo)} on:click={closeModal}>
-                                      Yes, I'm sure
-                                    </Button>
-                                    <Button color="alternative">No, cancel</Button>
-                                </div>
-                                </Modal>
-
+                            <select bind:value={task.status} on:change={()=> updateTaskClick(task.taskID,task.status)}>
+                                <option>pending</option>
+                                <option>completed</option>
+                            </select>
                           </TableBodyCell>
                         </TableBodyRow>
                       {/each}

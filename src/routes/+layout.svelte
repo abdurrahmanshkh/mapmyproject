@@ -9,7 +9,7 @@
 
 <div class="app">
 
-	<header class="flex-none mx-auto w-full bg-white dark:bg-gray-900 left-0 top-0 z-30 border-b-2 border-gray-300 dark:border-gray-700">
+	<header class="flex-none mx-auto w-full bg-white dark:bg-gray-900 left-0 top-0 z-30 border-b-2 border-gray-300 dark:border-gray-500">
 		<div class="w-full px-0 py-3 mx-auto lg:flex lg:justify-between max-w-8xl lg:px-3">
 			<Navbar>
 				<NavBrand href="/">

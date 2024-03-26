@@ -20,7 +20,7 @@ export const createTask = (req, res) => {
             return res.status(500).json("Internal server error")
         }
         if(data[0].ownerID!==userID){
-            return res.status(500).json("You're not the owner of this project")
+            return res.status(500).json("Only Manager is allowed to perform this action")
         }
     })
 
@@ -49,29 +49,28 @@ export const createTask = (req, res) => {
 
 
 export const updateTaskStatus=(req,res)=>{
-    const isManager=req.user.isManager
-
-    const taskID=req.params.taskID
+    const taskID=req.params.id
     const taskStatus=req.body.status
+    console.log(taskID,taskStatus)
     const updateTaskQuery="UPDATE tasks SET taskStatus=? WHERE taskID=?"
     db.query(updateTaskQuery,[taskStatus,taskID],(err)=>{
         if(err){
             console.log("Error updating task status : ",err)
-            return res.body(500).json("Internal server error")
+            return res.status(500).json("Internal server error")
         }
-        return res.body(200).json("Task Status Updated Successfully")
+        return res.status(200).json("Task Status Updated Successfully")
     })
 }
 
 export const updateDueDate=(req,res)=>{
     const isManager=req.user.isManager
     if(!isManager){
-        return res.status(500).json("You're not manager")
+        return res.status(500).json("Only manager is allowed to perform this action")
     }
     const taskDueDate = new Date(req.body.taskDueDate); // Convert to Date object
-    const taskID=req.params.taskID
+    const taskID=req.params.id
     const updateDueDateQuery="UPDATE tasks SET taskDueDate=? WHERE taskID=?"
-    db.query(updateTaskQuery,[taskStatus,taskID],(err)=>{
+    db.query(updateDueDateQuery,[taskDueDate,taskID],(err)=>{
         if(err){
             console.log("Error updating task status : ",err)
             return res.body(500).json("Internal server error")
@@ -86,7 +85,7 @@ export const updateAssignedUser=(req,res)=>{
         return res.status(500).json("You're not manager")
     }
     const assignedUsername = req.body.assignedUsername // Convert to Date object
-    const taskID=req.params.taskID
+    const taskID=req.params.id
     const getUserIDQuery="SELECT userID FROM users WHERE name=?"
     const updateAssignedUserQuery="UPDATE tasks SET assignedUser=? WHERE taskID=?"
 
@@ -110,7 +109,7 @@ export const updateAssignedUser=(req,res)=>{
 export const retrieveTask = (req, res) => {
     const parentProjectID = req.params.id; // Use req.params.id instead of req.param.id
     const getTaskQuery = "SELECT taskID,taskName,taskDescription,taskStatus,taskStartDate,taskDueDate,assignedUser FROM tasks WHERE parentProjectID=?";
-    
+ 
     db.query(getTaskQuery, [parentProjectID], (err, data) => {
         if (err) {
             console.error(err);
@@ -119,3 +118,4 @@ export const retrieveTask = (req, res) => {
         return res.status(200).json(data);
     });
 };
+
