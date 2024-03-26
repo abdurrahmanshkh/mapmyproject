@@ -4,7 +4,7 @@ export const createProject=(req,res)=>{
     const userID=req.user.userID
     const isManager=req.user.isManager
     if(!isManager){
-        return res.status(500).json("You're not manager")
+        return res.status(500).json("Only manager is allowed to perform this action")
     }
     console.log("in createProject : ",req.user.userID)
     const projectName=req.body.projectName

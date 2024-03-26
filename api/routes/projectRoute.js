@@ -6,6 +6,5 @@ const router=express.Router()
 router.post("/create",requireAuth,createProject)
 router.get("/list",requireAuth,retrieveProject)
 router.get("/:id/progress",requireAuth,calculateProgress)
-// router.get("/description/:id",)
 
 export default router

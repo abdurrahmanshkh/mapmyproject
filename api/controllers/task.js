@@ -20,7 +20,7 @@ export const createTask = (req, res) => {
             return res.status(500).json("Internal server error")
         }
         if(data[0].ownerID!==userID){
-            return res.status(500).json("You're not the owner of this project")
+            return res.status(500).json("Only Manager is allowed to perform this action")
         }
     })
 
@@ -75,7 +75,6 @@ export const updateDueDate=(req,res)=>{
             console.log("Error updating task status : ",err)
             return res.body(500).json("Internal server error")
         }
-        console.log("hi")
         return res.body(200).json("Task Status Updated Successfully")
     })
 }
