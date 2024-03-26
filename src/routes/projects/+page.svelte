@@ -69,15 +69,33 @@
     return parseInt(data) 
  }
 
+ async function createNewTask(){
+  const response=await fetch(`http://localhost:8080/api/project/${projectID}/task/create`,{
+      method: 'POST',
+      credentials:'include',
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body: JSON.stringify({
+        taskName,
+        taskDescription,
+        taskDueDate,
+        taskStartDate,
+        assignedUsername
+      })
+    })
+ }
 //DO NOT DELETE THIS VARIABLE
  var tasks=[]
 
-  var createProject = false;
-  var projectName = "";
-  var projectDescription = "";
-  var newTaskName = "";
-  var newTaskContributors = "";
-
+  let createProject = false;
+  let projectName = "";
+  let projectDescription = "";
+  let taskName = "";
+  let assignedUsername = "";
+  let taskDescription="";
+  let taskDueDate="";
+  let taskStartDate=""
   function createProjectOn() {
     createProject = true;
   }
@@ -209,7 +227,7 @@
 
                   {#if !createTask}
                   <div class="text-center">
-                    <Button class="max-w-50 px-10" on:click={createTaskOn}>
+                    <Button class="max-w-100 px-20" on:click={createTaskOn}>
                       Create New Task
                     </Button>
                   </div>
@@ -221,17 +239,15 @@
                   </h5>
 
                   <div class="gap-6 lg:grid grid-cols-9 mb-6">
-                    <Input class="col-span-4" type="text" placeholder="Task Name" bind:value={newTaskName} />
-                    <Input class="col-span-4" type="text" placeholder="Contributors" bind:value={newTaskContributors} />
-                    <Button class="" color="red" on:click={clearTask}>
-                      Clear
-                    </Button>
+                    <Input class="col-span-4" type="text" placeholder="Task Name" bind:value={taskName} />
+                    <Input class="col-span-4" type="text" placeholder="Contributors" bind:value={assignedUsername} />
+                    <Input class="col-span-4" type="text" placeholder="Description" bind:value={taskDescription} />
+                    <Input class="col-span-4" type="text" placeholder="Due Date" bind:value={taskDueDate} />
+                    <Input class="col-span-4" type="text" placeholder="Start Date" bind:value={taskStartDate} />
                   </div>
-
+              
                   <div class="text-center">
-                  <Button class="w-40" color="green" on:click={() => addTask(project.id)}>
-                    Add Task
-                  </Button>
+                    <Button class="w-40" color="green" on:click={() => createNewTask(project.projectID)}>Add Task</Button>
                   </div>
                   
                   </Card>

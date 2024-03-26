@@ -39,6 +39,7 @@
 	"type": "module",
 	"dependencies": {
 		"@popperjs/core": "^2.11.8",
+		"date-picker-svelte": "^2.11.0",
 		"flowbite-svelte-icons": "^0.4.5",
 		"tailwind-merge": "^2.2.0"
 	}
