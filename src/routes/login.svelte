@@ -146,8 +146,14 @@
 			<Button href="/projects" on:click={registerUser} type="submit" class="w-full">
 				Signup as Contributor
 			</Button>
-			<Button color="purple" href="/projects" on:click={registerUser} on:click={setasmanager}
-			type="submit" class="w-full">
+			<Button
+				color="purple"
+				href="/projects"
+				on:click={registerUser}
+				on:click={setasmanager}
+				type="submit"
+				class="w-full"
+			>
 				Signup as Manager
 			</Button>
 		</form>

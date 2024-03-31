@@ -9,7 +9,6 @@
 </svelte:head>
 
 <div class="app">
-
 	<Header />
 
 	<main class="bg-white dark:bg-gray-900" style="min-height: calc(100vh - 145px);">
@@ -17,5 +16,4 @@
 	</main>
 
 	<Footer />
-
 </div>
