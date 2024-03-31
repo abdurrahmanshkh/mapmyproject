@@ -6,6 +6,7 @@
 	let username = '';
 	let password = '';
 	let email = '';
+	let manager = false;
 
 	let error = null;
 	var account = true;
@@ -14,6 +15,9 @@
 	}
 	function switchtologin() {
 		account = true;
+	}
+	function setasmanager() {
+		manager = true;
 	}
 
 	const registerUser = async () => {
@@ -117,7 +121,7 @@
 {:else}
 	<Card class="w-full border-2 border-gray-300 dark:border-gray-700">
 		<form class="flex flex-col space-y-6" action="/">
-			<h3 class="text-xl font-medium text-gray-900 dark:text-white">
+			<h3 class="text-center text-xl font-medium text-gray-900 dark:text-white">
 				Create your MapMyProject account
 			</h3>
 			<Hr classHr="my-8 h-1" />
@@ -140,7 +144,11 @@
 				<Input type="password" name="password" placeholder="•••••" bind:value={password} required />
 			</Label>
 			<Button href="/projects" on:click={registerUser} type="submit" class="w-full">
-				Create account
+				Signup as Contributor
+			</Button>
+			<Button color="purple" href="/projects" on:click={registerUser} on:click={setasmanager}
+			type="submit" class="w-full">
+				Signup as Manager
 			</Button>
 		</form>
 		<div class="mt-6 text-sm font-medium text-gray-500 dark:text-gray-300">
