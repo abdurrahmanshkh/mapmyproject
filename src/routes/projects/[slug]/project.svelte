@@ -15,32 +15,12 @@
 	} from 'flowbite-svelte';
 	import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
 
-	var projects = [
-		{
-			id: 1,
-			name: 'Project 1',
-			description:
-				'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illo ab necessitatibus sint explicabo ...'
-		},
-		{
-			id: 2,
-			name: 'Project 2',
-			description:
-				'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illo ab necessitatibus sint explicabo ...'
-		},
-		{
-			id: 3,
-			name: 'Project 3',
-			description:
-				'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illo ab necessitatibus sint explicabo ...'
-		},
-		{
-			id: 4,
-			name: 'Project 4',
-			description:
-				'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illo ab necessitatibus sint explicabo ...'
-		}
-	];
+	var project = {
+		id: 1,
+		name: 'Project 1',
+		description:
+			'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illo ab necessitatibus sint explicabo ...'
+	};
 
 	var tasks = [
 		{
@@ -73,34 +53,9 @@
 		}
 	];
 
-	var createProject = false;
-	var projectName = '';
-	var projectDescription = '';
 	var newTaskName = '';
 	var newTaskContributors = '';
 
-	function createProjectOn() {
-		createProject = true;
-	}
-
-	function addProject() {
-		if (projectName && projectDescription) {
-			const newProjectId = projects.length + 1;
-			projects = [
-				...projects,
-				{ id: newProjectId, name: projectName, description: projectDescription }
-			];
-			projectName = '';
-			projectDescription = '';
-			createProject = false;
-		}
-	}
-
-	function clearProject() {
-		projectName = '';
-		projectDescription = '';
-		createProject = false;
-	}
 
 	function addTask(projectId) {
 		const newTaskId = tasks.length + 1;
@@ -153,162 +108,116 @@
 	<Card class="border-2 border-gray-300 dark:border-gray-700" size="" padding="xl">
 		<div class="lg:grid lg:grid-cols-1">
 			<h5 class="mb-0 text-center text-3xl font-bold text-gray-900 dark:text-white">
-				All Projects
+				{project.name}
 			</h5>
 		</div>
+
 		<Hr classHr="my-4 h-1" />
 
-		<Accordion>
-			{#each projects as project}
-				<div class="mb-5 lg:grid lg:grid-cols-1">
-					<AccordionItem class="border-gray-300 dark:border-gray-700">
-						<span slot="header">{project.name}</span>
-						<Tabs style="underline">
-							<TabItem open>
-								<div slot="title" class="flex items-center gap-2">
-									<GridSolid size="sm" />
-									Dashboard
-								</div>
-								<p class="mb-5 text-gray-900 dark:text-gray-100">
-									<b>Overview:</b><br />
-									{project.description}
-								</p>
-								<Progressbar
-									progress={calculateProjectCompletionStatus(project.id)}
-									labelOutside="Project Progress"
-								/>
-							</TabItem>
-
-							<TabItem>
-								<div slot="title" class="flex items-center gap-2">
-									<ClipboardSolid size="sm" />
-									Tasks
-								</div>
-								<Table>
-									<TableHead>
-										<TableHeadCell>Sr. No.</TableHeadCell>
-										<TableHeadCell>Task Name</TableHeadCell>
-										<TableHeadCell>Contributors</TableHeadCell>
-										<TableHeadCell>Progress</TableHeadCell>
-										<TableHeadCell>Action</TableHeadCell>
-									</TableHead>
-									<TableBody class="">
-										{#each tasks.filter((t) => t.projectId === project.id) as task}
-											<TableBodyRow>
-												<TableBodyCell>{task.srNo}</TableBodyCell>
-												<TableBodyCell>{task.taskName}</TableBodyCell>
-												<TableBodyCell>{task.contributors}</TableBodyCell>
-												<TableBodyCell>{task.progress}</TableBodyCell>
-												<TableBodyCell>
-													<Button color="red" on:click={() => (popupModal = true)}>Delete</Button>
-
-													<Modal bind:open={popupModal} size="xs" autoclose>
-														<div class="text-center">
-															<ExclamationCircleOutline
-																class="mx-auto mb-4 h-12 w-12 text-gray-400 dark:text-gray-200"
-															/>
-															<h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-																Are you sure you want to delete this Task?
-															</h3>
-															<Button
-																color="red"
-																class="me-2"
-																on:click={() => deleteTask(task.srNo)}
-																on:click={closeModal}
-															>
-																Yes, I'm sure
-															</Button>
-															<Button color="alternative">No, cancel</Button>
-														</div>
-													</Modal>
-												</TableBodyCell>
-											</TableBodyRow>
-										{/each}
-									</TableBody>
-								</Table>
-
-								<Hr classHr="h-1" />
-
-								{#if !createTask}
-									<div class="text-center">
-										<Button class="max-w-50 px-10" on:click={createTaskOn}>Create New Task</Button>
-									</div>
-								{:else}
-									<Card class="w-full max-w-full border-2 border-gray-300 dark:border-gray-700">
-										<h5
-											class="col-span-4 mb-6 text-center text-3xl font-bold text-gray-900 dark:text-white"
-										>
-											Create New Task
-										</h5>
-
-										<div class="mb-6 grid-cols-9 gap-6 lg:grid">
-											<Input
-												class="col-span-4"
-												type="text"
-												placeholder="Task Name"
-												bind:value={newTaskName}
-											/>
-											<Input
-												class="col-span-4"
-												type="text"
-												placeholder="Contributors"
-												bind:value={newTaskContributors}
-											/>
-											<Button class="" color="red" on:click={clearTask}>Clear</Button>
-										</div>
-
-										<div class="text-center">
-											<Button class="w-40" color="green" on:click={() => addTask(project.id)}>
-												Add Task
-											</Button>
-										</div>
-									</Card>
-								{/if}
-							</TabItem>
-						</Tabs>
-					</AccordionItem>
+		<Tabs style="underline">
+			<TabItem open>
+				<div slot="title" class="flex items-center gap-2">
+					<GridSolid size="sm" />
+					Dashboard
 				</div>
-			{/each}
-		</Accordion>
+				<div>
+				<p class="mb-5 text-gray-900 dark:text-gray-100">
+					<b>Overview:</b><br />
+					{project.description}
+				</p>
+				<Progressbar
+					progress={calculateProjectCompletionStatus(project.id)}
+					labelOutside="Project Progress"
+				/>
+				</div>
+			</TabItem>
 
-		<Hr classHr="mt-3 h-1" />
+			<TabItem>
+				<div slot="title" class="flex items-center gap-2">
+					<ClipboardSolid size="sm" />
+					Tasks
+				</div>
+				<Table>
+					<TableHead>
+						<TableHeadCell>Sr. No.</TableHeadCell>
+						<TableHeadCell>Task Name</TableHeadCell>
+						<TableHeadCell>Contributors</TableHeadCell>
+						<TableHeadCell>Progress</TableHeadCell>
+						<TableHeadCell>Action</TableHeadCell>
+					</TableHead>
+					<TableBody class="">
+						{#each tasks.filter((t) => t.projectId === project.id) as task}
+							<TableBodyRow>
+								<TableBodyCell>{task.srNo}</TableBodyCell>
+								<TableBodyCell>{task.taskName}</TableBodyCell>
+								<TableBodyCell>{task.contributors}</TableBodyCell>
+								<TableBodyCell>{task.progress}</TableBodyCell>
+								<TableBodyCell>
+									<Button color="red" on:click={() => (popupModal = true)}>Delete</Button>
 
-		{#if !createProject}
-			<div class="mt- mx-auto max-w-screen-xl items-center gap-4 lg:grid lg:grid-cols-1">
-				<Button class="" on:click={createProjectOn}>Create New Project</Button>
-			</div>
-		{:else}
-			<div>
-				<Card class="max-w-full border-2 border-gray-300 dark:border-gray-700">
-					<h5 class="mb-6 text-center text-3xl font-bold text-gray-900 dark:text-white">
-						Create New Project
-					</h5>
-					<div class="lg:grid lg:grid-cols-1">
-						<Input
-							type="text"
-							id="projectName"
-							placeholder="Project Name"
-							required
-							class="mb-5"
-							bind:value={projectName}
-						/>
-						<Textarea
-							type="text"
-							id="projectDescription"
-							placeholder="Project Description"
-							required
-							class="mb-5"
-							rows="6"
-							bind:value={projectDescription}
-						/>
+									<Modal bind:open={popupModal} size="xs" autoclose>
+										<div class="text-center">
+											<ExclamationCircleOutline
+												class="mx-auto mb-4 h-12 w-12 text-gray-400 dark:text-gray-200"
+											/>
+											<h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+												Are you sure you want to delete this Task?
+											</h3>
+											<Button
+												color="red"
+												class="me-2"
+												on:click={() => deleteTask(task.srNo)}
+												on:click={closeModal}
+											>
+												Yes, I'm sure
+											</Button>
+											<Button color="alternative">No, cancel</Button>
+										</div>
+									</Modal>
+								</TableBodyCell>
+							</TableBodyRow>
+						{/each}
+					</TableBody>
+				</Table>
 
-						<div class="mt- mx-auto max-w-screen-xl items-center gap-4 lg:grid lg:grid-cols-2">
-							<Button color="green" class="max-w-30" on:click={addProject}>Add Project</Button>
-							<Button color="red" class="" on:click={clearProject}>Clear</Button>
-						</div>
+				<Hr classHr="h-1" />
+
+				{#if !createTask}
+					<div class="text-center">
+						<Button class="max-w-50 px-10" on:click={createTaskOn}>Create New Task</Button>
 					</div>
-				</Card>
-			</div>
-		{/if}
+				{:else}
+					<Card class="w-full max-w-full border-2 border-gray-300 dark:border-gray-700">
+						<h5
+							class="col-span-4 mb-6 text-center text-3xl font-bold text-gray-900 dark:text-white"
+						>
+							Create New Task
+						</h5>
+
+						<div class="mb-6 grid-cols-9 gap-6 lg:grid">
+							<Input
+								class="col-span-4"
+								type="text"
+								placeholder="Task Name"
+								bind:value={newTaskName}
+							/>
+							<Input
+								class="col-span-4"
+								type="text"
+								placeholder="Contributors"
+								bind:value={newTaskContributors}
+							/>
+							<Button class="" color="red" on:click={clearTask}>Clear</Button>
+						</div>
+
+						<div class="text-center">
+							<Button class="w-40" color="green" on:click={() => addTask(project.id)}>
+								Add Task
+							</Button>
+						</div>
+					</Card>
+				{/if}
+			</TabItem>
+		</Tabs>
 	</Card>
 </div>
