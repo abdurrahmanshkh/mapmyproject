@@ -7,7 +7,7 @@
   import {onMount}from 'svelte'
   import { Spinner } from 'flowbite-svelte';
   let projectData=[]
-  let taskData=[]
+  $: taskData=[]
   let completedPercent=0
   onMount(async () => {
         try {
@@ -31,7 +31,6 @@
     });
     const tasks = await response.json();
     taskData=tasks
-    console.log(taskData); // Handle the tasks data as needed
  }
 
  // Function to handle project click
@@ -69,7 +68,7 @@
     return parseInt(data) 
  }
 
- async function createNewTask(){
+ async function createNewTask(projectID){
   const response=await fetch(`http://localhost:8080/api/project/${projectID}/task/create`,{
       method: 'POST',
       credentials:'include',
@@ -83,6 +82,19 @@
         taskStartDate,
         assignedUsername
       })
+    })
+    if (response.ok) {
+      fetchTasks(projectID)    
+  } 
+ }
+
+ async function createNewProject(){
+  const response=await fetch(`http://localhost:8080/api/project/${projectID}/task/create`,{
+      method: 'POST',
+      credentials:'include',
+      headers:{
+        'Content-Type':'application/json'
+      }
     })
  }
 //DO NOT DELETE THIS VARIABLE
@@ -116,43 +128,11 @@
     createProject = false;
   }
 
-  function addTask(projectId) {
-    const newTaskId = tasks.length + 1;
-    tasks = [...tasks, {
-      projectId: projectId,
-      srNo: newTaskId,
-      taskName: newTaskName,
-      contributors: newTaskContributors,
-      progress: "Not Started"
-    }];
-    newTaskName = "";
-    newTaskContributors = "";
-  }
-
-  function deleteTask(taskId) {
-    tasks = tasks.filter(task => task.srNo !== taskId);
-  }
-
   let createTask = false;
 
   function createTaskOn() {
     createTask = true;
   }
-
-  function clearTask() {
-    newTaskName = "";
-    newTaskContributors = "";
-    createTask = false;
-  }
-
-  
-
-  let popupModal = false;
-
-  function closeModal() {
-    popupModal = false;
-  }
-
 </script>
 
 <main>
@@ -183,12 +163,7 @@
                     {project.projectDescription}
                   </p>
                   {#await getProgress(project.projectID)}
-                  <div>
-                    <Button outline color="dark">
-                      <Spinner class="me-3" size="4" />
-                      Loading ...
-                    </Button>
-                  </div>
+                      <Spinner/>
                   {:then data} 
                   <Progressbar progress={data} labelOutside="Project Progress" />
                   {/await}
@@ -218,7 +193,7 @@
                                 <option>completed</option>
                             </select>
                           </TableBodyCell>
-                        </TableBodyRow>
+                         </TableBodyRow>
                       {/each}
                     </TableBody>
                   </Table>
@@ -247,7 +222,7 @@
                   </div>
               
                   <div class="text-center">
-                    <Button class="w-40" color="green" on:click={() => createNewTask(project.projectID)}>Add Task</Button>
+                    <Button class="w-40" color="green" on:click={()=>createNewTask(project.projectID)}>Add Task</Button>
                   </div>
                   
                   </Card>
