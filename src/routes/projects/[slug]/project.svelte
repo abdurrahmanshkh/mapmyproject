@@ -1,4 +1,5 @@
 <script>
+	import Graph from './graph.svelte';
 	import { AccordionItem, Accordion, Card, Hr } from 'flowbite-svelte';
 	import { Input, Textarea, Button } from 'flowbite-svelte';
 	import { Tabs, TabItem } from 'flowbite-svelte';
@@ -55,7 +56,6 @@
 
 	var newTaskName = '';
 	var newTaskContributors = '';
-
 
 	function addTask(projectId) {
 		const newTaskId = tasks.length + 1;
@@ -120,15 +120,20 @@
 					<GridSolid size="sm" />
 					Dashboard
 				</div>
-				<div>
-				<p class="mb-5 text-gray-900 dark:text-gray-100">
-					<b>Overview:</b><br />
-					{project.description}
-				</p>
-				<Progressbar
-					progress={calculateProjectCompletionStatus(project.id)}
-					labelOutside="Project Progress"
-				/>
+				<div class="container mx-auto grid-cols-1 gap-5 lg:grid">
+					<div class="">
+						<p class="mb-5 text-gray-900 dark:text-gray-100">
+							<b>Overview:</b><br />
+							{project.description}
+						</p>
+						<Progressbar
+							progress={calculateProjectCompletionStatus(project.id)}
+							labelOutside="Project Progress"
+						/>
+					</div>
+					<div class="mx-10 mt-5">
+						<Graph />
+					</div>
 				</div>
 			</TabItem>
 

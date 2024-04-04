@@ -119,7 +119,7 @@
 						labelOutside="Project Progress"
 					/>
 					<div class="text-center">
-						<Button color="purple">
+						<Button color="purple" href="/projects/{project.id}">
 							Go to Project Page <ArrowRightOutline class="ms-2 h-3.5 w-3.5" />
 						</Button>
 					</div>

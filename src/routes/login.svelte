@@ -101,7 +101,7 @@
 				<span>Your password</span>
 				<Input type="password" name="password" placeholder="•••••" bind:value={password} required />
 			</Label>
-			<Button on:click={loginUser} href="/projects" type="submit" class="w-full">
+			<Button on:click={loginUser} href="/dashboard" type="submit" class="w-full">
 				Login to your account
 			</Button>
 		</form>
@@ -143,12 +143,12 @@
 				<span>Your password</span>
 				<Input type="password" name="password" placeholder="•••••" bind:value={password} required />
 			</Label>
-			<Button href="/projects" on:click={registerUser} type="submit" class="w-full">
+			<Button href="/dashboard" on:click={registerUser} type="submit" class="w-full">
 				Signup as Contributor
 			</Button>
 			<Button
 				color="purple"
-				href="/projects"
+				href="/dashboard"
 				on:click={registerUser}
 				on:click={setasmanager}
 				type="submit"
