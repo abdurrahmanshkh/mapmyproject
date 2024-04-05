@@ -1,7 +1,6 @@
 <script>
 	import Graph from './graph.svelte';
-	import { AccordionItem, Accordion, Card, Hr } from 'flowbite-svelte';
-	import { Input, Textarea, Button } from 'flowbite-svelte';
+	import { Button, Input, Card, Hr } from 'flowbite-svelte';
 	import { Tabs, TabItem } from 'flowbite-svelte';
 	import { GridSolid, ClipboardSolid } from 'flowbite-svelte-icons';
 	import {
@@ -20,7 +19,7 @@
 		id: 1,
 		name: 'Project 1',
 		description:
-			'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illo ab necessitatibus sint explicabo ...'
+			'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illo ab necessitatibus sint explicabo. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illo ab necessitatibus sint explicabo.'
 	};
 
 	var tasks = [
@@ -102,6 +101,30 @@
 	function closeModal() {
 		popupModal = false;
 	}
+
+	function downloadProjectAsPDF() {
+		const projectData = JSON.stringify({ project, tasks }, null, 2);
+		const blob = new Blob([projectData], { type: 'application/pdf' });
+		const url = window.URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = 'project_report.pdf';
+		document.body.appendChild(a);
+		a.click();
+		window.URL.revokeObjectURL(url);
+	}
+
+	function downloadProjectAsText() {
+		const projectData = JSON.stringify({ project, tasks }, null, 2);
+		const blob = new Blob([projectData], { type: 'text/plain' });
+		const url = window.URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = 'project_report.txt';
+		document.body.appendChild(a);
+		a.click();
+		window.URL.revokeObjectURL(url);
+	}
 </script>
 
 <div class="container mx-auto py-10">
@@ -120,18 +143,31 @@
 					<GridSolid size="sm" />
 					Dashboard
 				</div>
-				<div class="container mx-auto grid-cols-1 gap-5 lg:grid">
-					<div class="">
-						<p class="mb-5 text-gray-900 dark:text-gray-100">
-							<b>Overview:</b><br />
-							{project.description}
-						</p>
-						<Progressbar
-							progress={calculateProjectCompletionStatus(project.id)}
-							labelOutside="Project Progress"
-						/>
+				<div class="container mx-auto grid-cols-5 gap-5 lg:grid">
+					<div class="col-span-2 space-y-5">
+						<Card class="border-2 border-gray-300 dark:border-gray-700" size="" padding="xl">
+							<p class="mb-5 text-gray-900 dark:text-gray-100">
+								<b>Overview</b><br />
+								{project.description}
+							</p>
+							<Progressbar
+								progress={calculateProjectCompletionStatus(project.id)}
+								labelOutside="Project Progress"
+							/>
+						</Card>
+						<Card
+							class="space-y-5 border-2 border-gray-300 dark:border-gray-700"
+							size=""
+							padding="xl"
+						>
+							<h5 class="mb-2 text-center text-xl font-bold text-gray-900 dark:text-white">
+								Download Project Report
+							</h5>
+							<Button class="w-full" color="red" on:click={downloadProjectAsPDF}>Download as PDF File</Button>
+            				<Button class="w-full" color="green" on:click={downloadProjectAsText}>Download as Text File</Button>
+						</Card>
 					</div>
-					<div class="mx-10 mt-5">
+					<div class="col-span-3">
 						<Graph />
 					</div>
 				</div>
