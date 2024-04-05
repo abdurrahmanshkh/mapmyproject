@@ -38,7 +38,8 @@
     fetchTasks(projectID);
  }
 
- async function updateTask(taskID,status) {
+ async function updateTask(taskID,status,projectID) {
+    console.log("TASKID : ",taskID,"STATUS : ",status)
     const response = await fetch(`http://localhost:8080/api/task/${taskID}/update/status`, {
       method: 'POST',
       credentials: 'include', // Include credentials for session management
@@ -48,9 +49,7 @@
       body: JSON.stringify({status})
 
     });
-    const tasks = await response.json();
-    taskData=tasks
-    console.log(taskData); // Handle the tasks data as needed
+    fetchTasks(projectID)
  }
  function updateTaskClick(taskID,status) {
     updateTask(taskID,status);
@@ -188,10 +187,7 @@
                           <TableBodyCell>{task.taskDescription}</TableBodyCell>
                           <TableBodyCell>{task.taskDueDate}</TableBodyCell>
                           <TableBodyCell>
-                            <select bind:value={task.status} on:change={()=> updateTaskClick(task.taskID,task.status)}>
-                                <option>pending</option>
-                                <option>completed</option>
-                            </select>
+                            <input type="checkbox" checked={task.taskStatus === 'completed'} on:change={()=>updateTask(task.taskID,task.taskStatus==='completed'?'pending':'completed',project.projectID)} />
                           </TableBodyCell>
                          </TableBodyRow>
                       {/each}
