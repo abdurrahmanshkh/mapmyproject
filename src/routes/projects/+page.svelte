@@ -23,7 +23,14 @@
     });
 
 
-
+ async function fetchProjects(){
+  const response = await fetch('http://localhost:8080/api/project/list',{
+              method: 'GET',
+              credentials: 'include'
+            });
+            const data = await response.json();
+            projectData=data
+ }
  async function fetchTasks(projectID) {
     const response = await fetch(`http://localhost:8080/api/project/${projectID}/task`, {
       method: 'GET',
@@ -50,9 +57,6 @@
 
     });
     fetchTasks(projectID)
- }
- function updateTaskClick(taskID,status) {
-    updateTask(taskID,status);
  }
 
  async function getProgress(projectID){
@@ -88,13 +92,18 @@
  }
 
  async function createNewProject(){
-  const response=await fetch(`http://localhost:8080/api/project/${projectID}/task/create`,{
+  const response=await fetch(`http://localhost:8080/api/project/create`,{
       method: 'POST',
       credentials:'include',
       headers:{
         'Content-Type':'application/json'
-      }
+      },
+      body: JSON.stringify({
+        projectName,
+        projectDescription
+      })
     })
+    fetchProjects()
  }
 //DO NOT DELETE THIS VARIABLE
  var tasks=[]
@@ -146,6 +155,7 @@
       <Hr classHr="my-4 h-1" />
 
       <Accordion>
+      {#if projectData!=null}
         {#each projectData as project}
           <div class="lg:grid lg:grid-cols-1 mb-5">
             <AccordionItem class="border-gray-300 dark:border-gray-700">
@@ -163,8 +173,12 @@
                   </p>
                   {#await getProgress(project.projectID)}
                       <Spinner/>
-                  {:then data} 
-                  <Progressbar progress={data} labelOutside="Project Progress" />
+                  {:then data}
+                  {#if !data} 
+                    <Progressbar progress={0} labelOutside="Project Progress" />
+                  {:else}
+                    <Progressbar progress={data} labelOutside="Project Progress" />
+                  {/if}
                   {/await}
                 </TabItem>
 
@@ -230,6 +244,9 @@
             </AccordionItem>
           </div>
         {/each}
+        {:else}
+        <p>no projects</p>
+      {/if}
       </Accordion>
 
       <Hr classHr="mt-3 h-1" />
@@ -253,7 +270,7 @@
           bind:value={projectDescription} />
           
           <div class="mt- gap-4 items-center mx-auto max-w-screen-xl lg:grid lg:grid-cols-2">
-            <Button color="green" class="max-w-30" on:click={addProject}>
+            <Button color="green" class="max-w-30" on:click={createNewProject}>
               Add Project
             </Button>
             <Button color="red" class="" on:click={clearProject}>
@@ -268,4 +285,4 @@
     </Card>
   </div>
 
-</main>
+</main> 

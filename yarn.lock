@@ -229,10 +229,10 @@
   dependencies:
     import-meta-resolve "^4.0.0"
 
-"@sveltejs/kit@^2.0.0":
-  version "2.5.2"
-  resolved "https://registry.npmjs.org/@sveltejs/kit/-/kit-2.5.2.tgz"
-  integrity sha512-1Pm2lsBYURQsjnLyZa+jw75eVD4gYHxGRwPyFe4DAmB3FjTVR8vRNWGeuDLGFcKMh/B1ij6FTUrc9GrerogCng==
+"@sveltejs/kit@^2.0.0", "@sveltejs/kit@^2.5.5":
+  version "2.5.5"
+  resolved "https://registry.npmjs.org/@sveltejs/kit/-/kit-2.5.5.tgz"
+  integrity sha512-ULe3PB00q4+wYRL+IS5FDPsCEVnhEITofm7b9Yz8malcH3r1SAnW/JJ6T13hIMeu8QNRIuVQWo+P4+2VklbnLQ==
   dependencies:
     "@types/cookie" "^0.6.0"
     cookie "^0.6.0"

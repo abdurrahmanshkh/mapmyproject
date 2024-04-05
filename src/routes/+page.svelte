@@ -1,5 +1,6 @@
 <script>
   import { Input, Label, Card, Button, Hr} from 'flowbite-svelte';
+  import { goto } from "@sveltejs/kit"
   //import {register,login,logout} from '../../api/controllers/authenticaton'
 
   //use these variables for json response
@@ -18,14 +19,6 @@
     function switchtologin() {
       account = true;
     }
-    function setAccountType(answer){
-      if(answer==='Manager'){
-        isManager=true
-      }else{
-        isManager=false
-      }
-    }
-
   const registerUser = async () => {
   try {
     const response = await fetch('http://localhost:8080/api/auth/register', {
@@ -39,15 +32,15 @@
         email,
         isManager
       }),
-    }).catch((error) => {
-      throw new Error(`Network error: ${error.message}`);
     });
+
 
     if (!response.ok) {
       const errorMessage = await response.text();
       error.set(`Registration failed: ${errorMessage}`);
       return;
     }
+    loginUser
 
     const data = await response.json();
     console.log(data);
@@ -57,7 +50,12 @@
   }
 };
 
+function userType(event){
+  isManager=event.target.value==='manager'
+}
+
 const loginUser = async () => {
+  console.log("in login : ",username,password)
   try {
     const response = await fetch('http://localhost:8080/api/auth/login', {
       method: 'POST',
@@ -69,21 +67,20 @@ const loginUser = async () => {
         username,
         password,
       }),
-    }).catch((error) => {
-      throw new Error(`Network error: ${error.message}`);
     });
 
     if (!response.ok) {
       const errorMessage = await response.text();
-      error.set(`Login failed: ${errorMessage}`);
+      error.set(errorMessage)
       return;
     }
 
     const data = await response.json();
     console.log(data);
     error.set(null);
+    goto('projects/')
   } catch (err) {
-    error.set(err.message);
+    console.log(err)
   }
 };
   
@@ -121,7 +118,7 @@ const loginUser = async () => {
           </h3>
           <Hr classHr="my-8 h-1" />
           <Label class="space-y-2">
-            <span>Email</span>
+            <span>Username</span>
             <Input type="username" name="username" placeholder="mark" bind:value={username} required />
           </Label>
           <Label class="space-y-2">
@@ -133,8 +130,8 @@ const loginUser = async () => {
           </Button>
         </form>
         <div class="mt-6 text-sm font-medium text-gray-500 dark:text-gray-300">
-          {#if $error}
-            <p class="text-red-500">{$error}</p>
+          {#if error!=null}
+            <p class="text-red-500">{error}</p>
           {/if}
             Not registered?
             <button on:click={switchtosignup} class="text-primary-700 hover:underline dark:text-primary-500">
@@ -162,14 +159,11 @@ const loginUser = async () => {
             <Input type="password" name="password" placeholder="•••••" bind:value={password} required />
           </Label>
           <Label class="space-y-2">
-            <!-- <span>Account Type</span>
-            <select bind:value={selected} on:change={answer=''}>
-              {#each accountType as account}
-                <option value={account}>
-                {account.text}
-                </option>
-              {/each}
-          </select> -->
+         <span>Account Type</span>
+            <select on:change={userType}>
+              <option value="manager">Manager</option>
+              <option value="contributer">Contributer</option>
+            </select>
           </Label>
           <Label>
           <Button href="/projects" on:click={registerUser} type="submit" class="w-full">
