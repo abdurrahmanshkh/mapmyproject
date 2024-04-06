@@ -1,14 +1,15 @@
 <script>
+	import { goto } from '$app/navigation';
   import { Input, Label, Card, Button, Hr} from 'flowbite-svelte';
-  //use these variables for json response
-  let username="";
+
+ let username="";
   let password="";
   let email="";
   let isManager=true
   let accountType=[{text:'Manager'},{text:'Contributer'}]
   let selected
   let answer=''
-  let error
+  let error=null
   export let accounter
   var account = true;
     function switchtosignup() {
@@ -35,12 +36,12 @@
 
     if (!response.ok) {
       const errorMessage = await response.text();
-      error.set(`Registration failed: ${errorMessage}`);
+      error.set(errorMessage)
       return;
     }
     const data = await response.json();
     console.log(data);
-    error.set(null);
+    loginUser()
   } catch (err) {
     error.set(err.message);
   }
@@ -67,15 +68,14 @@ const loginUser = async () => {
 
     if (!response.ok) {
       const errorMessage = await response.text();
-      error.set(errorMessage)
+      console.log(errorMessage)
       return;
     }
 
     const data = await response.json();
     accounter=data.isManager
     console.log(data);
-    error.set(null);
-    // goto('projects/')
+    goto('/projects')
   } catch (err) {
     console.log(err)
   }
@@ -122,7 +122,7 @@ const loginUser = async () => {
             <span>Your password</span>
             <Input type="password" name="password" placeholder="•••••" bind:value={password} required />
           </Label>
-          <Button href='/projects' on:click={loginUser}  type="submit" class="w-full">
+          <Button on:click={loginUser}  type="submit" class="w-full">
             Login to your account
           </Button>
         </form>
@@ -164,7 +164,7 @@ const loginUser = async () => {
             </select>
           </Label>
           <Label>
-          <Button href="/projects" on:click={registerUser} type="submit" class="w-full">
+          <Button on:click={registerUser} type="submit" class="w-full">
             Create account
           </Button>
           </Label>

@@ -1,5 +1,5 @@
 <script>
-  import { AccordionItem, Accordion, Card, Hr } from 'flowbite-svelte';
+  import { AccordionItem, Accordion, Card, Hr, A } from 'flowbite-svelte';
   import { Input, Textarea, Button } from 'flowbite-svelte';
   import { Tabs, TabItem } from 'flowbite-svelte';
   import { GridSolid, AdjustmentsVerticalSolid, ClipboardSolid } from 'flowbite-svelte-icons';
@@ -12,7 +12,7 @@
   import accounter from '../+page.svelte'
   let accountType=accounter
   console.log("type",accountType)
-  let projectData=[]
+  // let projectData=[]
   $: taskData=[]
   let visibile=false
   let completedPercent=0
@@ -31,19 +31,19 @@
   let taskStartDate=""
 
 
-  onMount(async () => {
-        try {
-            const response = await fetch('http://localhost:8080/api/project/list',{
-              method: 'GET',
-              credentials: 'include'
-            });
-            const data = await response.json();
-            projectData=data
-        } catch (error) {
-            console.error(error.message);
-        }
+  // onMount(async () => {
+  //       try {
+  //           const response = await fetch('http://localhost:8080/api/project/list',{
+  //             method: 'GET',
+  //             credentials: 'include'
+  //           });
+  //           const data = await response.json();
+  //           projectData=data
+  //       } catch (error) {
+  //           console.error(error.message);
+  //       }
       
-  });
+  // });
   
 
   function clearTask() {
@@ -64,7 +64,8 @@
               credentials: 'include'
             });
             const data = await response.json();
-            projectData=data
+            // projectData=data
+            return data
  }
  async function fetchTasks(projectID) {
     const response = await fetch(`http://localhost:8080/api/project/${projectID}/task`, {
@@ -210,134 +211,143 @@
       <Hr classHr="my-4 h-1" />
 
       <Accordion>
-      {#if projectData!=null || projectData!=undefined }
-        {#each projectData as project}
-          <div class="lg:grid lg:grid-cols-1 mb-5">
-            <AccordionItem class="border-gray-300 dark:border-gray-700">
-              <span slot="header">{project.projectName}</span>
-              <Tabs style="underline">
-         
-                <TabItem open>
-                  <div slot="title" class="flex items-center gap-2">
-                    <GridSolid size="sm" />
-                    Dashboard
-                  </div> 
-                  <div>                   
-                    <p class="text-gray-900 dark:text-gray-100 mb-5">
-                      <b>Overview:</b><br>
-                      {project.projectDescription}
-                    </p>
-                    {#await getProgress(project.projectID)}
-                      <Spinner/>
-                    {:then data}
-                    {#if !data[0]} 
-                      <Progressbar progress={0} labelOutside="Project Progress" />
-                    {:else}
-                      <Progressbar progress={parseFloat(data[0].toFixed(2))} labelOutside="Project Progress" />
-                      <br>
-                      <div class="rounded-lg bg-gray-50 p-3 dark:bg-gray-700">
-                        <div class="mb-2">
-                          <div class="grid grid-cols-3 gap-3">
-                            <dl class="flex h-[78px] flex-col items-center justify-center rounded-lg bg-red-100 dark:bg-gray-600">
-                              <dt class="mb-1 flex h-8 w-8 items-center justify-center rounded-full bg-red-100 text-sm font-medium text-red-600 dark:bg-gray-500 dark:text-red-300">
-                                {data[2]}
-                              </dt>
-                              <dd class="text-sm font-medium text-red-600 dark:text-red-300">To do</dd>
-                            </dl>
-    
-                            <dl class="flex h-[78px] flex-col items-center justify-center rounded-lg bg-green-100 dark:bg-gray-600">
-                              <dt class="mb-1 flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-sm font-medium text-blue-600 dark:bg-gray-500 dark:text-green-400">
-                                {data[1]}
-                              </dt>
-                              <dd class="text-sm font-medium text-green-600 dark:text-green-400">Done</dd>
-                            </dl>
+        {#await fetchProjects()}
+        <div>
+        <Button outline color="yellow">
+          <Spinner class="me-11" size="5"color="yellow" />
+          Loading ...
+        </Button>
+      </div>
+        {:then projectData} 
+        {#if projectData!=null && projectData!=undefined}
+          {#each projectData as project}
+            <div class="lg:grid lg:grid-cols-1 mb-5">
+              <AccordionItem class="border-gray-300 dark:border-gray-700">
+                <span slot="header">{project.projectName}</span>
+                <Tabs style="underline">
+          
+                  <TabItem open>
+                    <div slot="title" class="flex items-center gap-2">
+                      <GridSolid size="sm" />
+                      Dashboard
+                    </div> 
+                    <div>                   
+                      <p class="text-gray-900 dark:text-gray-100 mb-5">
+                        <b>Overview:</b><br>
+                        {project.projectDescription}
+                      </p>
+                      {#await getProgress(project.projectID)}
+                        <Spinner/>
+                      {:then data}
+                      {#if !data[0]} 
+                        <Progressbar progress={0} labelOutside="Project Progress" />
+                      {:else}
+                        <Progressbar progress={parseFloat(data[0].toFixed(2))} labelOutside="Project Progress" />
+                        <br>
+                        <div class="rounded-lg bg-gray-50 p-3 dark:bg-gray-700">
+                          <div class="mb-2">
+                            <div class="grid grid-cols-3 gap-3">
+                              <dl class="flex h-[78px] flex-col items-center justify-center rounded-lg bg-red-100 dark:bg-gray-600">
+                                <dt class="mb-1 flex h-8 w-8 items-center justify-center rounded-full bg-red-100 text-sm font-medium text-red-600 dark:bg-gray-500 dark:text-red-300">
+                                  {data[2]}
+                                </dt>
+                                <dd class="text-sm font-medium text-red-600 dark:text-red-300">To do</dd>
+                              </dl>
+      
+                              <dl class="flex h-[78px] flex-col items-center justify-center rounded-lg bg-green-100 dark:bg-gray-600">
+                                <dt class="mb-1 flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-sm font-medium text-blue-600 dark:bg-gray-500 dark:text-green-400">
+                                  {data[1]}
+                                </dt>
+                                <dd class="text-sm font-medium text-green-600 dark:text-green-400">Done</dd>
+                              </dl>
 
-                            <dl class="flex h-[78px] flex-col items-center justify-center rounded-lg bg-blue-100 dark:bg-gray-600">
-                              <dt class="mb-1 flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-sm font-medium text-blue-600 dark:bg-gray-500 dark:text-blue-300">
-                                {data[1]+data[2]}
-                              </dt>
-                              <dd class="text-sm font-medium text-blue-600 dark:text-blue-300">Total</dd>
-                            </dl>
+                              <dl class="flex h-[78px] flex-col items-center justify-center rounded-lg bg-blue-100 dark:bg-gray-600">
+                                <dt class="mb-1 flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-sm font-medium text-blue-600 dark:bg-gray-500 dark:text-blue-300">
+                                  {data[1]+data[2]}
+                                </dt>
+                                <dd class="text-sm font-medium text-blue-600 dark:text-blue-300">Total</dd>
+                              </dl>
+                            </div>
                           </div>
                         </div>
+                      {/if}
+                      {/await}
                       </div>
-                    {/if}
-                    {/await}
+                      
+    
+                  </TabItem>
+
+                  <TabItem on:click={()=>handleProjectClick(project.projectID)}>
+                    <div slot="title" class="flex items-center gap-2">
+                      <ClipboardSolid size="sm" />
+                      Tasks
                     </div>
-                    
-  
-                </TabItem>
+                    <Table>
+                      <TableHead>
+                        <TableHeadCell>Name</TableHeadCell>
+                        <TableHeadCell>Description</TableHeadCell>
+                        <TableHeadCell>Due Date</TableHeadCell>
+                        <TableHeadCell>Status</TableHeadCell>
+                      </TableHead>
+                      <TableBody class="">
+                        {#each taskData as task }
+                          <TableBodyRow>
+                            <TableBodyCell>{task.taskName}</TableBodyCell>
+                            <TableBodyCell>{task.taskDescription}</TableBodyCell>
+                            {#if task.taskDueDate!=null}
+                            <TableBodyCell>{formatDate(task.taskDueDate)}</TableBodyCell>
+                            {:else}
+                            <TableBodyCell>none</TableBodyCell>
+                            {/if}
+                            <TableBodyCell>
+                              <input type="checkbox" checked={task.taskStatus === 'completed'} on:change={()=>updateTask(task.taskID,task.taskStatus==='completed'?'pending':'completed',project.projectID)} />
+                            </TableBodyCell>
+                          </TableBodyRow>
+                        {/each}
+                      </TableBody>
+                    </Table>
 
-                <TabItem on:click={()=>handleProjectClick(project.projectID)}>
-                  <div slot="title" class="flex items-center gap-2">
-                    <ClipboardSolid size="sm" />
-                    Tasks
-                  </div>
-                  <Table>
-                    <TableHead>
-                      <TableHeadCell>Name</TableHeadCell>
-                      <TableHeadCell>Description</TableHeadCell>
-                      <TableHeadCell>Due Date</TableHeadCell>
-                      <TableHeadCell>Status</TableHeadCell>
-                    </TableHead>
-                    <TableBody class="">
-                      {#each taskData as task }
-                        <TableBodyRow>
-                          <TableBodyCell>{task.taskName}</TableBodyCell>
-                          <TableBodyCell>{task.taskDescription}</TableBodyCell>
-                          {#if task.taskDueDate!=null}
-                          <TableBodyCell>{formatDate(task.taskDueDate)}</TableBodyCell>
-                          {:else}
-                          <TableBodyCell>none</TableBodyCell>
-                          {/if}
-                          <TableBodyCell>
-                            <input type="checkbox" checked={task.taskStatus === 'completed'} on:change={()=>updateTask(task.taskID,task.taskStatus==='completed'?'pending':'completed',project.projectID)} />
-                          </TableBodyCell>
-                         </TableBodyRow>
-                      {/each}
-                    </TableBody>
-                  </Table>
+                    <Hr classHr="h-1"/>
 
-                  <Hr classHr="h-1"/>
+                    {#if !createTask}
+                    <div class="text-center">
+                      <Button class="max-w-100 px-20" on:click={createTaskOn}>
+                        Create New Task
+                      </Button>
+                    </div>
+                    {:else}
+                    <Card class="w-full max-w-full border-gray-300 dark:border-gray-700 border-2">
 
-                  {#if !createTask}
-                  <div class="text-center">
-                    <Button class="max-w-100 px-20" on:click={createTaskOn}>
+                    <h5 class="mb-6 col-span-4 text-3xl font-bold text-gray-900 dark:text-white text-center">
                       Create New Task
-                    </Button>
-                  </div>
-                  {:else}
-                  <Card class="w-full max-w-full border-gray-300 dark:border-gray-700 border-2">
+                    </h5>
 
-                  <h5 class="mb-6 col-span-4 text-3xl font-bold text-gray-900 dark:text-white text-center">
-                    Create New Task
-                  </h5>
+                    <div class="gap-6 lg:grid grid-cols-9 mb-6">
+                      <Input class="col-span-4" type="text" placeholder="Task Name" bind:value={taskName} />
+                      <Input class="col-span-4" type="text" placeholder="Contributors" bind:value={assignedUsername} />
+                      <Input class="col-span-4" type="text" placeholder="Description" bind:value={taskDescription} />
+                      <Input class="col-span-4" type="text" placeholder="Due Date" bind:value={taskDueDate} />
+                      <Input class="col-span-4" type="text" placeholder="Start Date" bind:value={taskStartDate} />
+                    </div>
+                
+                    <div class="text-center">
+                      <Button class="w-40" color="green" on:click={()=>createNewTask(project.projectID)}>Add Task</Button>
+                    </div>
 
-                  <div class="gap-6 lg:grid grid-cols-9 mb-6">
-                    <Input class="col-span-4" type="text" placeholder="Task Name" bind:value={taskName} />
-                    <Input class="col-span-4" type="text" placeholder="Contributors" bind:value={assignedUsername} />
-                    <Input class="col-span-4" type="text" placeholder="Description" bind:value={taskDescription} />
-                    <Input class="col-span-4" type="text" placeholder="Due Date" bind:value={taskDueDate} />
-                    <Input class="col-span-4" type="text" placeholder="Start Date" bind:value={taskStartDate} />
-                  </div>
-              
-                  <div class="text-center">
-                    <Button class="w-40" color="green" on:click={()=>createNewTask(project.projectID)}>Add Task</Button>
-                  </div>
+                    
+                    </Card>
+                    {/if}
+                    
+                  </TabItem>
 
-                  
-                  </Card>
-                  {/if}
-                  
-                </TabItem>
-
-              </Tabs>
-            </AccordionItem>
+                </Tabs>
+              </AccordionItem>
           </div>
         {/each}
         {:else}
         <p>no projects</p>
       {/if}
+      {/await}
       </Accordion>
 
       <Hr classHr="mt-3 h-1" />
