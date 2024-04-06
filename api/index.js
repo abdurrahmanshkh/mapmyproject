@@ -24,8 +24,8 @@ app.use(cookieParser())
 
 app.use("/api/auth",authRoute)
 app.use("/api/project",projectRoute)
-/app.use("/api/project",taskRoute)
-/app.use("/api/task",taskRoute)
+app.use("/api/project",taskRoute)
+app.use("/api/task",taskRoute)
 
 app.use("/api",userRoute)
 //localhost:8080/api/project/create uses requireAuth middleware which only allows authenticated users to create new projects 

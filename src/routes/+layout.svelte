@@ -1,6 +1,18 @@
 <script>
 	import '../app.pcss';
-  	import { Footer, FooterCopyright, Navbar, NavBrand, NavLi, NavUl, NavHamburger, DarkMode} from 'flowbite-svelte';
+  	import { Footer, FooterCopyright, Navbar, NavBrand, NavLi, NavUl, NavHamburger, DarkMode, Button} from 'flowbite-svelte';
+	import { writable } from 'svelte/store';
+	const isLoggedIn = writable(false);
+	async function logout() {
+    // Replace this URL with your backend endpoint to log out
+    	const response = await fetch('http://localhost:8080/api/auth/logout', 
+		{ 
+			method: 'POST' ,
+			credentials:'include'
+	});
+		localStorage.removeItem('accessToken')
+		console.log(response)
+	}
 </script>
 
 <svelte:head>
@@ -17,11 +29,10 @@
 				</NavBrand>
 				<NavHamburger />
 				<NavUl>
-					<NavLi href="/" active={true}>Home</NavLi>
+					<NavLi href="/" active={true}>login</NavLi>
 					<NavLi href="/projects">Projects</NavLi>
-					<NavLi href="/dashboard">Dashboard</NavLi>
-					<NavLi href="/projects/test">ProjectTest</NavLi>					
 				</NavUl>
+				<Button on:click={logout} href="/">Logout</Button>
 				<DarkMode/>
 			</Navbar>
 		</div>

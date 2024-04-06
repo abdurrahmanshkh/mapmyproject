@@ -5,10 +5,32 @@
   import { GridSolid, AdjustmentsVerticalSolid, ClipboardSolid } from 'flowbite-svelte-icons';
   import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Progressbar, Modal } from 'flowbite-svelte';
   import {onMount}from 'svelte'
+  import {Calendar} from 'svelte-calendar'
   import { Spinner } from 'flowbite-svelte';
+  import Flatpickr from 'flatpickr';
+  import 'flatpickr/dist/flatpickr.min.css';
+  import accounter from '../+page.svelte'
+  let accountType=accounter
+  console.log("type",accountType)
   let projectData=[]
   $: taskData=[]
+  let visibile=false
   let completedPercent=0
+  let todo=0
+  let done=0
+  let profileName=''
+  let taskstart = '';
+  let taskdue = '';
+  let createProject = false;
+  let projectName = "";
+  let projectDescription = "";
+  let taskName = "";
+  let assignedUsername = "";
+  let taskDescription="";
+  let taskDueDate="";
+  let taskStartDate=""
+
+
   onMount(async () => {
         try {
             const response = await fetch('http://localhost:8080/api/project/list',{
@@ -20,8 +42,21 @@
         } catch (error) {
             console.error(error.message);
         }
-    });
+      
+  });
+  
 
+  function clearTask() {
+   projectName = "";
+   projectDescription = "";
+   taskName = "";
+   assignedUsername = "";
+   taskDescription="";
+   taskDueDate="";
+   taskStartDate=""
+
+    createTask = false;
+  }
 
  async function fetchProjects(){
   const response = await fetch('http://localhost:8080/api/project/list',{
@@ -66,9 +101,32 @@
     })
 
     const data=await response.json()
-    console.log(data,"project ",projectID)
-    completedPercent=data
-    return parseInt(data) 
+    console.log("data in progress:",data)
+    completedPercent=data[0]
+    done=data[1]
+    todo=data[2]
+    return data
+ }
+
+ async function getProfile(ID){
+    const userID=ID
+    const response=await fetch('http://localhost:8080/api/user/name',{
+      method: 'POST',
+      credentials:'include',
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body: JSON.stringify({userID})
+    })
+    const data=await response.json()
+    console.log("Data : ",data[0].name,"userID ",userID)
+    profileName=data[0].name
+    return data[0].name
+ }
+ function getProfileClick(ID){
+  const data=getProfile(ID)
+  console.log(data)
+  return data
  }
 
  async function createNewTask(projectID){
@@ -108,14 +166,6 @@
 //DO NOT DELETE THIS VARIABLE
  var tasks=[]
 
-  let createProject = false;
-  let projectName = "";
-  let projectDescription = "";
-  let taskName = "";
-  let assignedUsername = "";
-  let taskDescription="";
-  let taskDueDate="";
-  let taskStartDate=""
   function createProjectOn() {
     createProject = true;
   }
@@ -141,6 +191,11 @@
   function createTaskOn() {
     createTask = true;
   }
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString(); // This will format the date according to the user's locale
+ }
 </script>
 
 <main>
@@ -155,7 +210,7 @@
       <Hr classHr="my-4 h-1" />
 
       <Accordion>
-      {#if projectData!=null}
+      {#if projectData!=null || projectData!=undefined }
         {#each projectData as project}
           <div class="lg:grid lg:grid-cols-1 mb-5">
             <AccordionItem class="border-gray-300 dark:border-gray-700">
@@ -166,20 +221,51 @@
                   <div slot="title" class="flex items-center gap-2">
                     <GridSolid size="sm" />
                     Dashboard
-                  </div>
-                  <p class="text-gray-900 dark:text-gray-100 mb-5">
-                    <b>Overview:</b><br>
-                    {project.projectDescription}
-                  </p>
-                  {#await getProgress(project.projectID)}
+                  </div> 
+                  <div>                   
+                    <p class="text-gray-900 dark:text-gray-100 mb-5">
+                      <b>Overview:</b><br>
+                      {project.projectDescription}
+                    </p>
+                    {#await getProgress(project.projectID)}
                       <Spinner/>
-                  {:then data}
-                  {#if !data} 
-                    <Progressbar progress={0} labelOutside="Project Progress" />
-                  {:else}
-                    <Progressbar progress={data} labelOutside="Project Progress" />
-                  {/if}
-                  {/await}
+                    {:then data}
+                    {#if !data[0]} 
+                      <Progressbar progress={0} labelOutside="Project Progress" />
+                    {:else}
+                      <Progressbar progress={parseFloat(data[0].toFixed(2))} labelOutside="Project Progress" />
+                      <br>
+                      <div class="rounded-lg bg-gray-50 p-3 dark:bg-gray-700">
+                        <div class="mb-2">
+                          <div class="grid grid-cols-3 gap-3">
+                            <dl class="flex h-[78px] flex-col items-center justify-center rounded-lg bg-red-100 dark:bg-gray-600">
+                              <dt class="mb-1 flex h-8 w-8 items-center justify-center rounded-full bg-red-100 text-sm font-medium text-red-600 dark:bg-gray-500 dark:text-red-300">
+                                {data[2]}
+                              </dt>
+                              <dd class="text-sm font-medium text-red-600 dark:text-red-300">To do</dd>
+                            </dl>
+    
+                            <dl class="flex h-[78px] flex-col items-center justify-center rounded-lg bg-green-100 dark:bg-gray-600">
+                              <dt class="mb-1 flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-sm font-medium text-blue-600 dark:bg-gray-500 dark:text-green-400">
+                                {data[1]}
+                              </dt>
+                              <dd class="text-sm font-medium text-green-600 dark:text-green-400">Done</dd>
+                            </dl>
+
+                            <dl class="flex h-[78px] flex-col items-center justify-center rounded-lg bg-blue-100 dark:bg-gray-600">
+                              <dt class="mb-1 flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-sm font-medium text-blue-600 dark:bg-gray-500 dark:text-blue-300">
+                                {data[1]+data[2]}
+                              </dt>
+                              <dd class="text-sm font-medium text-blue-600 dark:text-blue-300">Total</dd>
+                            </dl>
+                          </div>
+                        </div>
+                      </div>
+                    {/if}
+                    {/await}
+                    </div>
+                    
+  
                 </TabItem>
 
                 <TabItem on:click={()=>handleProjectClick(project.projectID)}>
@@ -199,7 +285,11 @@
                         <TableBodyRow>
                           <TableBodyCell>{task.taskName}</TableBodyCell>
                           <TableBodyCell>{task.taskDescription}</TableBodyCell>
-                          <TableBodyCell>{task.taskDueDate}</TableBodyCell>
+                          {#if task.taskDueDate!=null}
+                          <TableBodyCell>{formatDate(task.taskDueDate)}</TableBodyCell>
+                          {:else}
+                          <TableBodyCell>none</TableBodyCell>
+                          {/if}
                           <TableBodyCell>
                             <input type="checkbox" checked={task.taskStatus === 'completed'} on:change={()=>updateTask(task.taskID,task.taskStatus==='completed'?'pending':'completed',project.projectID)} />
                           </TableBodyCell>
@@ -234,6 +324,7 @@
                   <div class="text-center">
                     <Button class="w-40" color="green" on:click={()=>createNewTask(project.projectID)}>Add Task</Button>
                   </div>
+
                   
                   </Card>
                   {/if}
@@ -250,7 +341,7 @@
       </Accordion>
 
       <Hr classHr="mt-3 h-1" />
-      
+      {#if accountType!=0}
       {#if !createProject}
       <div class="mt- gap-4 items-center mx-auto max-w-screen-xl lg:grid lg:grid-cols-1">
         <Button class="" on:click={createProjectOn}>
@@ -258,6 +349,7 @@
         </Button>
       </div>
       {:else}
+
       <div>
       <Card class="max-w-full border-gray-300 dark:border-gray-700 border-2">
         <h5 class="mb-6 text-3xl font-bold text-gray-900 dark:text-white text-center">
@@ -281,8 +373,9 @@
       </Card>
       </div>
       {/if}
-
+      {/if}
     </Card>
   </div>
+
 
 </main> 

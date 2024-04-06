@@ -83,6 +83,11 @@ export const login=(req,res)=>{
 export const logout=(req,res)=>{
     res.clearCookie("accessToken",{
         secure:true,
-        sameSite:"none"
+        sameSite:'none'
     }).status(200).json("User logged out successfully")
+}
+
+export const getSession=(req,res)=>{
+    const userType=req.cookies.isManager
+    return res.status(500).json(userType)
 }

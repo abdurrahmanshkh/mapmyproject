@@ -1,7 +1,7 @@
 import { db } from "../connect.js";
 
 export const getProfile = (req, res) => {
-    const userID = req.user.userID;
+    const userID = req.body.userID;
     const getUsernameQuery="SELECT name FROM users WHERE userID=?"
     db.query(getUsernameQuery,[userID],(err,data)=>{
         if(err){

@@ -56,7 +56,15 @@ export const calculateProgress=(req,res)=>{
             console.log(err)
             return res.status(500).json("Internal server error")
         }
-        const completedPercent=data.filter((data)=>data.taskStatus=='completed').length*100/data.length
-        return res.status(200).json(completedPercent)
+        const completedTask=data.filter((data)=>data.taskStatus==='completed').length
+        const pendingTask=data.filter((data)=>data.taskStatus==='pending').length
+        const completedPercent=completedTask*100/(pendingTask+completedTask)
+        let newdata=[
+            completedPercent,
+            completedTask,
+            pendingTask
+        ]
+        console.log("data: ",newdata)
+        return res.status(200).json(newdata)
     })
 }

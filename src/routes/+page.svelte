@@ -1,8 +1,5 @@
 <script>
   import { Input, Label, Card, Button, Hr} from 'flowbite-svelte';
-  import { goto } from "@sveltejs/kit"
-  //import {register,login,logout} from '../../api/controllers/authenticaton'
-
   //use these variables for json response
   let username="";
   let password="";
@@ -12,6 +9,7 @@
   let selected
   let answer=''
   let error
+  export let accounter
   var account = true;
     function switchtosignup() {
       account = false;
@@ -40,8 +38,6 @@
       error.set(`Registration failed: ${errorMessage}`);
       return;
     }
-    loginUser
-
     const data = await response.json();
     console.log(data);
     error.set(null);
@@ -76,9 +72,10 @@ const loginUser = async () => {
     }
 
     const data = await response.json();
+    accounter=data.isManager
     console.log(data);
     error.set(null);
-    goto('projects/')
+    // goto('projects/')
   } catch (err) {
     console.log(err)
   }
@@ -125,7 +122,7 @@ const loginUser = async () => {
             <span>Your password</span>
             <Input type="password" name="password" placeholder="•••••" bind:value={password} required />
           </Label>
-          <Button on:click={loginUser} href="/projects" type="submit" class="w-full">
+          <Button href='/projects' on:click={loginUser}  type="submit" class="w-full">
             Login to your account
           </Button>
         </form>
@@ -160,7 +157,8 @@ const loginUser = async () => {
           </Label>
           <Label class="space-y-2">
          <span>Account Type</span>
-            <select on:change={userType}>
+         <br>
+            <select class="mt-2 dark:bg-gray-800 dark:text-white" on:change={userType}>
               <option value="manager">Manager</option>
               <option value="contributer">Contributer</option>
             </select>
