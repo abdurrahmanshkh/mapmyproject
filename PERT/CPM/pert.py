@@ -1,36 +1,32 @@
-class Activity:
-    def __init__(self, name, optimistic, pessimistic, most_likely):
-        self.name = name
-        self.optimistic = optimistic
-        self.pessimistic = pessimistic
-        self.most_likely = most_likely
-        self.expected_time = (optimistic + (4 * most_likely) + pessimistic) / 6
-        self.variance = ((pessimistic - optimistic) / 6) ** 2
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import norm
 
-def get_activities_pert():
-    activities = []
-    num_activities = int(input("Enter the number of activities: "))
-    for i in range(1, num_activities + 1):
-        name = input(f"Enter name of activity {i}: ")
-        optimistic = int(input(f"Enter optimistic time for activity {i}: "))
-        pessimistic = int(input(f"Enter pessimistic time for activity {i}: "))
-        most_likely = int(input(f"Enter most likely time for activity {i}: "))
-        activities.append(Activity(name, optimistic, pessimistic, most_likely))
-    return activities
+def calculate_pert(minimum, maximum, most_likely):
+    optimistic = minimum
+    pessimistic = maximum
+    most_likely = most_likely
+    
+    expected_value = (optimistic + 4 * most_likely + pessimistic) / 6
+    variance = ((pessimistic - optimistic) / 6) ** 2
+    
+    return expected_value, variance
 
-def pert():
-    activities = get_activities_pert()
-    expected_duration = 0
-    variance_sum = 0
-    for activity in activities:
-        expected_duration += activity.expected_time
-        variance_sum += activity.variance
-    project_duration = expected_duration
-    project_variance = variance_sum ** 0.5
-    return project_duration, project_variance
 
-# Example usage
-if __name__ == "__main__":
-    project_duration, project_variance = pert()
-    print("Expected Project Duration:", project_duration)
-    print("Project Variance:", project_variance)
+def get_pert_data(optimistic,pessimistic,likely):
+    
+    minimum_estimates = optimistic
+    maximum_estimates = pessimistic
+    most_likely_estimates = likely
+    
+    variance_arr=[]
+    mean_arr=[]
+    for i in range(len(minimum_estimates)):
+        mean, variance = calculate_pert(minimum_estimates[i], maximum_estimates[i], most_likely_estimates[i])
+        mean_arr.append(mean)
+        variance_arr.append(variance)
+    total_expected_time=sum(mean_arr)
+    total_variance_time=sum(variance_arr)
+
+    print("Var: ",variance_arr,mean_arr)
+    return variance_arr,mean_arr,total_expected_time,total_variance_time

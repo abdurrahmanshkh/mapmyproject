@@ -13,7 +13,9 @@ export const createTask = (req, res) => {
     const usernameQuery="SELECT * FROM users WHERE name=?"
     const validateOwnerQuery="SELECT ownerID FROM project WHERE projectID=?"
     console.log("ASSIGNED USER NAME : ", assignedUsername)
-
+    if(!isManager){
+        return res.status(500).json("Only manager can create new tasks")
+    }
     db.query(validateOwnerQuery,[parentProjectID],(err,data)=>{
         if(err){
             console.log("Error : ",err)
@@ -24,9 +26,7 @@ export const createTask = (req, res) => {
         }
     })
 
-    if(!isManager){
-        return res.status(500).json("Only manager can create new tasks")
-    }
+  
     db.query(usernameQuery,[assignedUsername],(err,data)=>{
         if(err){
             console.log("Error in creating task",err)
@@ -107,15 +107,60 @@ export const updateAssignedUser=(req,res)=>{
 }
 
 export const retrieveTask = (req, res) => {
-    const parentProjectID = req.params.id; // Use req.params.id instead of req.param.id
+    const parentProjectID = parseInt(req.params.id);
     const getTaskQuery = "SELECT taskID,taskName,taskDescription,taskStatus,taskStartDate,taskDueDate,assignedUser FROM tasks WHERE parentProjectID=?";
- 
-    db.query(getTaskQuery, [parentProjectID], (err, data) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json("Internal server error");
-        }
-        return res.status(200).json(data);
-    });
+    const isManager = req.user.isManager;
+    const assignedUserID = req.user.userID;
+
+    if (!isManager) {
+        const getAssignedTask = "SELECT taskID,taskName,taskDescription,taskStatus,taskStartDate,taskDueDate,assignedUser FROM tasks WHERE parentProjectID=? AND assignedUser=?";
+        console.log("task: ", parentProjectID, assignedUserID);
+        db.query(getAssignedTask, [parentProjectID, assignedUserID], (err, data) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json("Internal server error");
+            }
+            return res.status(200).json(data);
+        });
+    } else {
+        db.query(getTaskQuery, [parentProjectID], (err, data) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json("Internal server error");
+            }
+            return res.status(200).json(data);
+        });
+    }
 };
 
+export const insertPERTData = (req,res)=>{
+    const parentProjectID=req.params.id
+    const optimistic=req.body.optimisticTimes
+    const pessimistic=req.body.pessimisticTimes
+    const likely=req.body.mostLikelyTimes
+    const PERTInsertQuery="INSERT INTO tasks(optimistic,pessimistic,likely)VALUES(?)"
+    const val=[optimistic,pessimistic,likely]
+    db.query(PERTInsertQuery,[val],(err)=>{
+        if(err){
+            console.log("PERT error : ",err)
+            return res.status(500).json("Internal server error")
+        }
+        return res.status(500).json("PERT values added successfully")
+    })
+}
+
+export const retrievePERTData = (req,res) =>{
+    const parentProjectID=req.params.id
+    const PERTQuery="SELECT optimistic,pessimistic,likely FROM tasks WHERE parentProjectID=?"
+    db.query(PERTQuery,[parentProjectID],(err,data)=>{
+        if(err){
+            console.log("PERT error : ",err)
+            return res.status(500).json("Internal server error")
+        }
+        console.log("per data : ",data)
+        return res.status(200).json(data)
+    })
+}
+
+export const retrieveContributerTask=(req,res)=>{
+}

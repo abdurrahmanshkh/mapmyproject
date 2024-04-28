@@ -40,9 +40,11 @@
 	"type": "module",
 	"dependencies": {
 		"@popperjs/core": "^2.11.8",
+		"chart.js": "^4.4.2",
 		"date-picker-svelte": "^2.11.0",
 		"flatpickr": "^4.6.13",
 		"flowbite-svelte-icons": "^0.4.5",
+		"svelte-chartjs": "^3.1.5",
 		"svelte-kit-cookie-session": "^4.0.0",
 		"svelte-loader": "^3.2.0",
 		"svelte-navigator": "^3.2.2",

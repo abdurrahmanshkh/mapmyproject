@@ -2,6 +2,7 @@
 	import '../app.pcss';
   	import { Footer, FooterCopyright, Navbar, NavBrand, NavLi, NavUl, NavHamburger, DarkMode, Button} from 'flowbite-svelte';
 	import { writable } from 'svelte/store';
+	import {UserPlusSolid} from 'flowbite-svelte-icons'
 	const isLoggedIn = writable(false);
 	async function logout() {
     // Replace this URL with your backend endpoint to log out
@@ -29,10 +30,11 @@
 				</NavBrand>
 				<NavHamburger />
 				<NavUl>
-					<NavLi href="/" active={true}>login</NavLi>
-					<NavLi href="/projects">Projects</NavLi>
 				</NavUl>
-				<Button on:click={logout} href="/">Logout</Button>
+				<Button color="none" class="flex right" href="/">Login</Button>
+				<Button color="none" href="/projects">Projects</Button>
+				<Button color="none" href="/chart">Chart</Button>
+				<Button color="none" on:click={logout} href="/">Logout</Button>
 				<DarkMode/>
 			</Navbar>
 		</div>

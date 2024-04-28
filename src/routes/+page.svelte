@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
   import { Input, Label, Card, Button, Hr} from 'flowbite-svelte';
 
- let username="";
+  let username="";
   let password="";
   let email="";
   let isManager=true
@@ -14,9 +14,17 @@
   var account = true;
     function switchtosignup() {
       account = false;
+      error=null
+      username="";
+      password="";
+      email="";
     }
     function switchtologin() {
       account = true;
+      error=null
+      username="";
+      password="";
+      email="";
     }
   const registerUser = async () => {
   try {
@@ -35,12 +43,10 @@
 
 
     if (!response.ok) {
-      const errorMessage = await response.text();
-      error.set(errorMessage)
+      error = await response.text();
+      
       return;
     }
-    const data = await response.json();
-    console.log(data);
     loginUser()
   } catch (err) {
     error.set(err.message);
@@ -51,7 +57,7 @@ function userType(event){
   isManager=event.target.value==='manager'
 }
 
-const loginUser = async () => {
+export const loginUser = async () => {
   console.log("in login : ",username,password)
   try {
     const response = await fetch('http://localhost:8080/api/auth/login', {
@@ -65,10 +71,12 @@ const loginUser = async () => {
         password,
       }),
     });
-
+    console.log("session ",sessionStorage.getItem('accessToken'))
+    console.log("local ",localStorage.getItem('accessToken'))
+    console.log("session key ",sessionStorage.key(0))
     if (!response.ok) {
-      const errorMessage = await response.text();
-      console.log(errorMessage)
+      error = await response.text();
+      console.log("Error",error)
       return;
     }
 
@@ -108,11 +116,18 @@ const loginUser = async () => {
     </Card>
 
     {#if account}
+
       <Card class="w-full border-gray-300 dark:border-gray-700 border-2">
+       
         <form class="flex flex-col  space-y-6" action="/">
           <h3 class="text-xl font-medium text-gray-900 dark:text-white text-center">
             Ready to get started? Login to MapMyProject and experience a new era of project management.
           </h3>
+          {#if error!=null}
+          <div class="rounded-lg bg-red-200 p-3 dark:bg-red-150">
+            <center><dd class="text-sm font-medium text-red-600 dark:text-red-700">{error}</dd></center>
+          </div>
+            {/if}
           <Hr classHr="my-8 h-1" />
           <Label class="space-y-2">
             <span>Username</span>
@@ -127,9 +142,7 @@ const loginUser = async () => {
           </Button>
         </form>
         <div class="mt-6 text-sm font-medium text-gray-500 dark:text-gray-300">
-          {#if error!=null}
-            <p class="text-red-500">{error}</p>
-          {/if}
+       
             Not registered?
             <button on:click={switchtosignup} class="text-primary-700 hover:underline dark:text-primary-500">
               Create account
@@ -142,6 +155,11 @@ const loginUser = async () => {
           <h3 class="text-xl font-medium text-gray-900 dark:text-white">
             Create your MapMyProject account
           </h3>
+          {#if error!=null}
+          <div class="rounded-lg bg-red-200 p-3 dark:bg-red:400">
+            <center><dd class="text-sm font-medium text-red-600 dark:text-red-300">{error}</dd></center>
+          </div>
+            {/if}
           <Hr classHr="my-8 h-1" />
           <Label class="space-y-2">
             <span>Full Name</span>
