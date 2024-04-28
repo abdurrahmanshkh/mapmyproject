@@ -32,7 +32,7 @@
   let taskDueDate="";
   let taskStartDate=""
 
-  let chartTasks;
+    let chartTasks;
     let chartOverall;
     let variance_arr;
     let mean_arr;
@@ -41,9 +41,35 @@
     let optimisticTimes = [10, 14, 10, 11, 14];
     let pessimisticTimes = [14, 26, 17, 19, 24];
     let mostLikelyTimes = [12, 13, 15, 14, 20];
-    let taskColors = ['blue', 'red', 'green', 'orange', 'purple']; // Define colors for each task
+    const taskColors = [
+    "#1f77b4", // Blue
+    "#ff7f0e", // Orange
+    "#2ca02c", // Green
+    "#d62728", // Red
+    "#9467bd", // Purple
+    "#8c564b", // Brown
+    "#e377c2", // Pink
+    "#7f7f7f", // Gray
+    "#bcbd22", // Yellow-Green
+    "#17becf", // Turquoise
+    "#aec7e8", // Light Blue
+    "#ffbb78", // Light Orange
+    "#98df8a", // Light Green
+    "#ff9896", // Light Red
+    "#c5b0d5"  // Light Purple
+  ];
+    async function insertNewPERTDATA(projectID){
+      let taskIDs=taskData.map((task)=>{return task.taskID})
+      const response=await fetch(`http://localhost:8080/api/project/${projectID}/pert/`,{
+        method: 'POST',
+        credentials: 'include',
 
-
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body: JSON.stringify({taskIDs,optimisticTimes,pessimisticTimes,mostLikelyTimes})
+      })
+    }
     async function fetchPERTDATA(id){
       const response = await fetch(`http://localhost:8080/api/project/${id}/pert/data`,{
         method:'GET',
@@ -54,13 +80,12 @@
         }
       })
       const data=await response.json()
-      console.log(optimisticTimes,pessimisticTimes,mostLikelyTimes)
-      optimisticTimes=data.optimistic
-      pessimisticTimes=data.pessimistic
-      mostLikelyTimes=data.likely
-      await calculatePERT()
-      renderTasksChart()
-      renderOverallChart()
+      console.log("Fetch data : ",data)
+      optimisticTimes=data.map((op)=>{return op.optimistic})
+      pessimisticTimes=data.map((ps)=>{return ps.pessimistic})
+      mostLikelyTimes=data.map((ml)=>{return ml.likely})
+      console.log("fetch pert : ","op : ",optimisticTimes,"ps : ",pessimisticTimes,"ml : ",mostLikelyTimes)
+      fetchDataAndRenderChart()
     }
 
     async function calculatePERT() {
@@ -87,13 +112,17 @@
       
       // Render chart for individual tasks
       renderTasksChart();
-      console.log("Render chart")
       // Render chart for overall probability
       renderOverallChart();
     }
     
     function renderTasksChart() {
       const ctxTasks = document.getElementById('tasksChart');
+      if(chartTasks){
+        chartTasks.destroy()
+      }
+      ctxTasks.style.minWidth = '100px';
+      ctxTasks.style.minHeight = '50px';
       chartTasks = new Chart(ctxTasks, {
         type: 'line',
         data: {
@@ -102,7 +131,7 @@
             label: `Task ${index + 1}`,
             data: [], 
             fill: true,
-            borderColor: taskColors[index], // Assign color based on index
+            borderColor: taskColors[index%taskColors.length], // Assign color based on index
             tension: 0.1
           }))
         },
@@ -110,12 +139,17 @@
           scales: {
             x: {
               type: 'linear',
-              position: 'bottom'
+              position: 'bottom',
+
+              title:{
+                display: true,
+                text : 'Number of     Days'
+              }
             },
             y: {
               title: {
                 display: true,
-                text: 'Probability'
+                text: 'Probability Density'
               }
             }
           }
@@ -127,6 +161,11 @@
     
     function renderOverallChart() {
       const ctxOverall = document.getElementById('overallChart');
+      ctxOverall.style.minWidth = '100px';
+      ctxOverall.style.minHeight = '50px';
+      if(chartOverall){
+        chartOverall.destroy()
+      }
       chartOverall = new Chart(ctxOverall, {
         type: 'line',
         data: {
@@ -135,7 +174,6 @@
             label: 'Overall Probability',
             data: [], // Fill this with your y-axis data
             fill: true,
-            backgroundColor: 'rgba(54, 162, 235, 0.2)', 
             borderColor: 'blue',
             tension: 0.1
           }]
@@ -158,7 +196,7 @@
       
       generateNormalDistributionOverall();
     }
-  
+    
     function generateNormalDistributionTasks() {
       let normalData = [];
       for (let i = 0; i < mean_arr.length; i++) {
@@ -171,14 +209,14 @@
         }
         normalData.push(dataPoints);
       }
-      
-      // Update each dataset with its corresponding data points
-      normalData.forEach((dataPoints, index) => {
+    // Update each dataset with its corresponding data points
+    normalData.forEach((dataPoints, index) => {
         chartTasks.data.datasets[index].data = dataPoints;
-      });
-      
-      chartTasks.update();
-    }
+    });
+
+    // Update the chart
+    chartTasks.update();
+}
     
     function generateNormalDistributionOverall() {
       let overallData = [];
@@ -226,8 +264,8 @@
     });
     const tasks = await response.json();
     taskData=tasks
+    console.log("Task : ",taskData)
     await fetchPERTDATA(projectID)
-    console.log("taskData : ",taskData.pessimisticTimes)
  }
 
  function handleProjectClick(projectID) {
@@ -235,7 +273,6 @@
  }
 
  async function updateTask(taskID,status,projectID) {
-    console.log("TASKID : ",taskID,"STATUS : ",status)
     const response = await fetch(`http://localhost:8080/api/task/${taskID}/update/status`, {
       method: 'POST',
       credentials: 'include', 
@@ -324,10 +361,12 @@
  }
 
 
- function PERT() {
+ async function insertPERTDATA(projectID) {
     // Select all input elements in the table
     const inputs = document.querySelectorAll('input[type="text"]');
-
+    optimisticTimes=[]
+    pessimisticTimes=[]
+    mostLikelyTimes=[]
     // Iterate over each input element
     inputs.forEach((input, index) => {
       const value = parseFloat(input.value);
@@ -342,10 +381,8 @@
         }
       }
     });
-    pert()
-    console.log('Optimistic Times:', optimisticTimes);
-    console.log('Pessimistic Times:', pessimisticTimes);
-    console.log('Most Likely Times:', mostLikelyTimes);
+    fetchDataAndRenderChart()
+    await insertNewPERTDATA(projectID)
   }
 
 </script>
@@ -506,13 +543,13 @@
                         <TableBodyRow>
                           <TableBodyCell>{task.taskName}</TableBodyCell>
                           <TableBodyCell>
-                            <Input type="text" class="flex h-[40px] w-[150px] flex-col items-center justify-center bg-green-200" color="green" />
+                            <Input value={task.optimistic} type="text"class="flex h-[40px] w-[150px] flex-col items-center justify-center bg-green-200" color="green" />
                           </TableBodyCell>
                           <TableBodyCell>
-                            <Input type="text" class="flex h-[40px] w-[150px] flex-col items-center justify-center bg-red-200" color="red"/>
+                            <Input value={task.pessimistic} type="text" class="flex h-[40px] w-[150px] flex-col items-center justify-center bg-red-200" color="red"/>
                           </TableBodyCell>
                           <TableBodyCell>
-                            <Input type="text" class="flex h-[40px] w-[150px] flex-col items-center justify-center bg-blue-200" color="blue" />
+                            <Input value={task.likely} type="text" class="flex h-[40px] w-[150px] flex-col items-center justify-center bg-blue-200" color="blue" />
                           </TableBodyCell>
                         </TableBodyRow>
                         {/each}
@@ -521,13 +558,25 @@
 
                     <br>
                     <div>
-                    <Button class="flex justify-center" >Calculate PERT</Button>
+                    <Button class="flex justify-center" on:click={insertPERTDATA(project.projectID)}>Calculate PERT</Button>
                     </div>
+                    <br>
+                    <Card class="w-full max-w-full border-gray-300 dark:border-gray-700 border-2">
                     <div>
-                      <canvas id='tasksChart' style="width:100px; height:30px"></canvas>
+                      <canvas id='tasksChart' style="width:100px; height:50px"></canvas>
                     </div>
+                    </Card>
+                    <br>
+                    <Card class="w-full max-w-full border-gray-300 dark:border-gray-700 border-2">
                     <div>
-                      <canvas id='overallChart' style="width:100px; height:30px"></canvas>
+                      <canvas id='overallChart' style="width:100px; height:50px"></canvas>
+                    </div>
+                    </Card>
+                  </TabItem>
+                  <TabItem>
+                    <div slot="title" class="flex items-center gap-2">
+                      <ChartMixedSolid size="sm" />
+                      Contributors
                     </div>
                   </TabItem>
                 </Tabs>

@@ -108,12 +108,12 @@ export const updateAssignedUser=(req,res)=>{
 
 export const retrieveTask = (req, res) => {
     const parentProjectID = parseInt(req.params.id);
-    const getTaskQuery = "SELECT taskID,taskName,taskDescription,taskStatus,taskStartDate,taskDueDate,assignedUser FROM tasks WHERE parentProjectID=?";
+    const getTaskQuery = "SELECT taskID,taskName,taskDescription,taskStatus,taskStartDate,taskDueDate,assignedUser,optimistic,pessimistic,likely FROM tasks WHERE parentProjectID=?";
     const isManager = req.user.isManager;
     const assignedUserID = req.user.userID;
 
     if (!isManager) {
-        const getAssignedTask = "SELECT taskID,taskName,taskDescription,taskStatus,taskStartDate,taskDueDate,assignedUser FROM tasks WHERE parentProjectID=? AND assignedUser=?";
+        const getAssignedTask = "SELECT taskID,taskName,taskDescription,taskStatus,taskStartDate,taskDueDate,assignedUser,optimistic,pessimistic,likely FROM tasks WHERE parentProjectID=? AND assignedUser=?";
         console.log("task: ", parentProjectID, assignedUserID);
         db.query(getAssignedTask, [parentProjectID, assignedUserID], (err, data) => {
             if (err) {
@@ -133,21 +133,72 @@ export const retrieveTask = (req, res) => {
     }
 };
 
-export const insertPERTData = (req,res)=>{
-    const parentProjectID=req.params.id
-    const optimistic=req.body.optimisticTimes
-    const pessimistic=req.body.pessimisticTimes
-    const likely=req.body.mostLikelyTimes
-    const PERTInsertQuery="INSERT INTO tasks(optimistic,pessimistic,likely)VALUES(?)"
-    const val=[optimistic,pessimistic,likely]
-    db.query(PERTInsertQuery,[val],(err)=>{
-        if(err){
-            console.log("PERT error : ",err)
-            return res.status(500).json("Internal server error")
-        }
-        return res.status(500).json("PERT values added successfully")
+export const retrieveContributerTask=(req,res)=>{
+    const parentProjectID = parseInt(req.params.id);
+    const getTaskQuery="SELECT assginedUser,taskStatus FROM tasks WHERE parentProjectId=?"
+    db.query(getTaskQuery,[parentProjectID],(err,data)=>{
+        let completedUserMapping = {};
+        data.forEach(element => {
+            if (!completedUserMapping[element.assignedUser]) {
+                completedUserMapping[element.assignedUser] = {
+                    completed: 0,
+                    pending: 0,
+                    total: 0
+                };
+            }
+            // Increment the appropriate count based on the task status
+            if (element.taskStatus === 'completed') {
+                completedUserMapping[element.assignedUser].completed++;
+            } else if (element.taskStatus === 'pending') {
+                completedUserMapping[element.assignedUser].pending++;
+            }
+            completedUserMapping[element.assignedUser].total++;
+        });
+        return res.status(200).json(completedUserMapping)
     })
+
 }
+
+export const insertPERTData = (req, res) => {
+    const parentProjectID = req.params.id;
+    const taskIDs = req.body.taskIDs;
+    const optimistic = req.body.optimisticTimes;
+    const pessimistic = req.body.pessimisticTimes;
+    const likely = req.body.mostLikelyTimes;
+    console.log("task ", taskIDs, optimistic, pessimistic, likely);
+
+    const PERTInsertQuery = "UPDATE tasks SET optimistic=?, pessimistic=?, likely=? WHERE taskID=?";
+    const promises = []; // Array to store promises for each database query
+
+    for (let i = 0; i < taskIDs.length; i++) {
+        let taskID = taskIDs[i];
+        let op = optimistic[i];
+        let ps = pessimistic[i];
+        let ml = likely[i];
+
+        // Create a promise for each database query
+        const promise = new Promise((resolve, reject) => {
+            db.query(PERTInsertQuery, [op, ps, ml, taskID], (err, result) => {
+                if (err) {
+                    reject(err); // Reject the promise if there's an error
+                } else {
+                    resolve(); // Resolve the promise if the query is successful
+                }
+            });
+        });
+        promises.push(promise); // Push the promise to the array
+    }
+
+    // Wait for all promises to resolve
+    Promise.all(promises)
+        .then(() => {
+            res.status(200).json("OK"); // Send response after all queries are completed
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).json("Internal server error");
+        });
+};
 
 export const retrievePERTData = (req,res) =>{
     const parentProjectID=req.params.id
@@ -160,7 +211,4 @@ export const retrievePERTData = (req,res) =>{
         console.log("per data : ",data)
         return res.status(200).json(data)
     })
-}
-
-export const retrieveContributerTask=(req,res)=>{
 }
